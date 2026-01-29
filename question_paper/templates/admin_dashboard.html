@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Question Paper Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1337ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101322",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .glass-card {
+            background: rgba(16, 19, 34, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#0d101b] dark:text-white transition-colors duration-200">
+    <div class="layout-container flex h-full grow flex-col min-h-screen">
+        <!-- Top Navigation Bar -->
+        <header
+            class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e7e9f3] dark:border-gray-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 md:px-10 py-3 sticky top-0 z-50">
+            <div class="flex items-center gap-4 text-[#0d101b] dark:text-white">
+                <div class="size-8 text-primary">
+                    <svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd"
+                            d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z"
+                            fill="currentColor" fill-rule="evenodd"></path>
+                        <path clip-rule="evenodd"
+                            d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z"
+                            fill="currentColor" fill-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold leading-tight tracking-tight">QP Admin</h2>
+            </div>
+            {% comment %} <div class="hidden md:flex flex-1 justify-center">
+                <nav class="flex items-center gap-8">
+                    <a class="text-primary text-sm font-semibold border-b-2 border-primary pb-1"
+                        href="{% url 'question_paper:admin_dashboard' %}">Dashboard</a>
+                </nav>
+            </div> {% endcomment %}
+            <div class="flex items-center gap-3">
+                {% comment %} <a href="{% url 'admin:index' %}" target="_blank"
+                    class="hidden sm:flex min-w-[120px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold hover:bg-primary/20 transition-all border border-primary/20">
+                    <span class="material-symbols-outlined text-sm mr-2">open_in_new</span>
+                    Django Admin
+                </a> {% endcomment %}
+                <form method="post" action="{% url 'admin:logout' %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:shadow-primary/40 active:scale-95 transition-all">
+                        Logout
+                    </button>
+                </form>
+                {% comment %} <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCHx14t0CJbuSm8s6CzfOtcpqQEMylK_BCiH5ZMjJXLZNcvBvzQdIO3RoZLq1obTfbPyQJH5zls84GYJLLcdYgbg2l-JWbSrDFe6fAGr9npGOHXf_UFKg6_WaDdzv4jeGbnarFJop4VIjU3jeZ60t08DusuEDfRj8IoGd9ndbWJxxJTGnNHVLOgHLkkf2Z-immtJmVbEG8d5EBSI08mpp2jLkaG45XfQNBOf7_qQwW95ncYDhLqJR1LHiTTp3xCcXSy2loGP3tALQjG");'>
+                </div> {% endcomment %}
+            </div>
+        </header>
+
+        <main class="flex-1 px-4 md:px-10 lg:px-20 py-8 max-w-[1600px] mx-auto w-full">
+            <!-- Headline -->
+            <div class="mb-8">
+                <h1 class="text-[#0d101b] dark:text-white text-3xl font-bold tracking-tight">Welcome back, {{ admin_user.username }}</h1>
+                <p class="text-gray-500 dark:text-gray-400 mt-1">Here's what's happening with your question papers
+                    today.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <!-- Revisions -->
+                <div
+                    class="relative overflow-hidden flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm border-l-4 border-purple-500 group hover:shadow-md transition-all">
+                    <span
+                        class="material-symbols-outlined absolute -right-4 -bottom-4 text-purple-500/10 text-8xl group-hover:scale-110 transition-transform">history_edu</span>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Active Revisions</p>
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-3xl font-bold leading-tight">{{ total_revisions }}</p>
+                    </div>
+                </div>
+                <!-- Exams -->
+                <div
+                    class="relative overflow-hidden flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm border-l-4 border-emerald-500 group hover:shadow-md transition-all">
+                    <span
+                        class="material-symbols-outlined absolute -right-4 -bottom-4 text-emerald-500/10 text-8xl group-hover:scale-110 transition-transform">quiz</span>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Exam Names</p>
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-3xl font-bold leading-tight">{{ total_exam_names }}</p>
+                    </div>
+                </div>
+                <!-- Subjects -->
+                <div
+                    class="relative overflow-hidden flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm border-l-4 border-primary group hover:shadow-md transition-all">
+                    <span
+                        class="material-symbols-outlined absolute -right-4 -bottom-4 text-primary/10 text-8xl group-hover:scale-110 transition-transform">menu_book</span>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Subject Codes</p>
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-3xl font-bold leading-tight">{{ total_subject_codes }}</p>
+                    </div>
+                </div>
+                <!-- Papers -->
+                <div
+                    class="relative overflow-hidden flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm border-l-4 border-amber-500 group hover:shadow-md transition-all">
+                    <span
+                        class="material-symbols-outlined absolute -right-4 -bottom-4 text-amber-500/10 text-8xl group-hover:scale-110 transition-transform">description</span>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Question Papers</p>
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-3xl font-bold leading-tight">{{ total_question_papers }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid Row 2 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <!-- Modules -->
+                <div
+                    class="relative overflow-hidden flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm border-l-4 border-sky-500 group hover:shadow-md transition-all">
+                    <span
+                        class="material-symbols-outlined absolute -right-4 -bottom-4 text-sky-500/10 text-8xl group-hover:scale-110 transition-transform">grid_view</span>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Modules</p>
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-3xl font-bold leading-tight">{{ total_modules }}</p>
+                    </div>
+                </div>
+                <!-- Outcomes -->
+                <div
+                    class="relative overflow-hidden flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm border-l-4 border-indigo-500 group hover:shadow-md transition-all">
+                    <span
+                        class="material-symbols-outlined absolute -right-4 -bottom-4 text-indigo-500/10 text-8xl group-hover:scale-110 transition-transform">insights</span>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Outcomes</p>
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-3xl font-bold leading-tight">{{ total_outcomes }}</p>
+                    </div>
+                </div>
+                <!-- Instructions -->
+                <div
+                    class="relative overflow-hidden flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm border-l-4 border-rose-500 group hover:shadow-md transition-all">
+                    <span
+                        class="material-symbols-outlined absolute -right-4 -bottom-4 text-rose-500/10 text-8xl group-hover:scale-110 transition-transform">assignment</span>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Instructions</p>
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-3xl font-bold leading-tight">{{ total_instructions }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Header -->
+            <div class="flex items-center justify-between mb-6 px-1">
+                <h2 class="text-2xl font-bold tracking-tight">Management Overview</h2>
+                {% comment %} <button class="text-primary text-sm font-semibold flex items-center gap-1 hover:underline">
+                    View All Modules
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button> {% endcomment %}
+            </div>
+
+            <!-- Management Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <!-- Revisions Card -->
+                <div
+                    class="flex flex-col rounded-xl bg-white dark:bg-gray-800 shadow-lg border-t-4 border-purple-500 h-[400px]">
+                    <div class="p-5 flex items-center gap-3 border-b border-gray-100 dark:border-gray-700">
+                        <div class="p-2 bg-purple-500/10 rounded-lg text-purple-500">
+                            <span class="material-symbols-outlined">update</span>
+                        </div>
+                        <h3 class="font-bold text-lg">Revisions</h3>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                        <div class="space-y-3">
+                            {% for revision in recent_revisions %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold">{{ revision.year }}</p>
+                                    <p class="text-xs text-gray-400">Revision Year</p>
+                                </div>
+                                <span class="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>
+                            </div>
+                            {% empty %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-400">No revisions added yet</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="p-4 grid grid-cols-2 gap-3 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{% url 'question_paper:revision_list' %}"
+                            class="bg-primary text-white text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-primary/90 transition-colors text-center">Manage</a>
+                        <a href="{% url 'question_paper:revision_add' %}"
+                            class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-1">
+                            <span class="material-symbols-outlined text-xs">add</span> Add New
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Exams Card -->
+                <div
+                    class="flex flex-col rounded-xl bg-white dark:bg-gray-800 shadow-lg border-t-4 border-emerald-500 h-[400px]">
+                    <div class="p-5 flex items-center gap-3 border-b border-gray-100 dark:border-gray-700">
+                        <div class="p-2 bg-emerald-500/10 rounded-lg text-emerald-500">
+                            <span class="material-symbols-outlined">event_available</span>
+                        </div>
+                        <h3 class="font-bold text-lg">Exams</h3>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                        <div class="space-y-3">
+                            {% for exam in recent_exam_names %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold">{{ exam.name|truncatewords:6 }}</p>
+                                    <p class="text-xs text-emerald-500 font-medium">Active</p>
+                                </div>
+                                <span class="material-symbols-outlined text-emerald-500 text-sm">rocket_launch</span>
+                            </div>
+                            {% empty %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-400">No exam names added yet</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="p-4 grid grid-cols-2 gap-3 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{% url 'question_paper:exam_name_list' %}"
+                            class="bg-primary text-white text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-primary/90 transition-colors text-center">Manage</a>
+                        <a href="{% url 'question_paper:exam_name_add' %}"
+                            class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-1">
+                            <span class="material-symbols-outlined text-xs">add</span> Add New
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Subjects Card -->
+                <div
+                    class="flex flex-col rounded-xl bg-white dark:bg-gray-800 shadow-lg border-t-4 border-primary h-[400px]">
+                    <div class="p-5 flex items-center gap-3 border-b border-gray-100 dark:border-gray-700">
+                        <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                            <span class="material-symbols-outlined">collections_bookmark</span>
+                        </div>
+                        <h3 class="font-bold text-lg">Subjects</h3>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                        <div class="space-y-3">
+                            {% for subject in recent_subject_codes %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold">{{ subject.code }}: {{ subject.subject_name|truncatewords:4 }}</p>
+                                </div>
+                                <span class="material-symbols-outlined text-primary text-sm">school</span>
+                            </div>
+                            {% empty %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-400">No subject codes added yet</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="p-4 grid grid-cols-2 gap-3 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{% url 'question_paper:subject_code_list' %}"
+                            class="bg-primary text-white text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-primary/90 transition-colors text-center">Manage</a>
+                        <a href="{% url 'question_paper:subject_code_add' %}"
+                            class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-1">
+                            <span class="material-symbols-outlined text-xs">add</span> Add New
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Modules Card -->
+                <div
+                    class="flex flex-col rounded-xl bg-white dark:bg-gray-800 shadow-lg border-t-4 border-sky-400 h-[400px]">
+                    <div class="p-5 flex items-center gap-3 border-b border-gray-100 dark:border-gray-700">
+                        <div class="p-2 bg-sky-400/10 rounded-lg text-sky-500">
+                            <span class="material-symbols-outlined">grid_view</span>
+                        </div>
+                        <h3 class="font-bold text-lg">Modules</h3>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                        <div class="space-y-3">
+                            {% for module in recent_modules %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold">Module {{ module.module_number }}</p>
+                                    <p class="text-xs text-gray-400">Question Module</p>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-400">No modules added yet</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="p-4 grid grid-cols-2 gap-3 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{% url 'question_paper:module_list' %}"
+                            class="bg-primary text-white text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-primary/90 transition-colors text-center">Manage</a>
+                        <a href="{% url 'question_paper:module_add' %}"
+                            class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-1">
+                            <span class="material-symbols-outlined text-xs">add</span> Add New
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Outcomes Card -->
+                <div
+                    class="flex flex-col rounded-xl bg-white dark:bg-gray-800 shadow-lg border-t-4 border-indigo-500 h-[400px]">
+                    <div class="p-5 flex items-center gap-3 border-b border-gray-100 dark:border-gray-700">
+                        <div class="p-2 bg-indigo-500/10 rounded-lg text-indigo-500">
+                            <span class="material-symbols-outlined">insights</span>
+                        </div>
+                        <h3 class="font-bold text-lg">Outcomes</h3>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                        <div class="space-y-3">
+                            {% for outcome in recent_outcomes %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold">{{ outcome.outcome_code }}</p>
+                                    <p class="text-xs text-gray-400">Module Outcome</p>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-400">No outcomes added yet</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="p-4 grid grid-cols-2 gap-3 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{% url 'question_paper:outcome_list' %}"
+                            class="bg-primary text-white text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-primary/90 transition-colors text-center">Manage</a>
+                        <a href="{% url 'question_paper:outcome_add' %}"
+                            class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-1">
+                            <span class="material-symbols-outlined text-xs">add</span> Add New
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Instructions Card -->
+                <div
+                    class="flex flex-col rounded-xl bg-white dark:bg-gray-800 shadow-lg border-t-4 border-amber-500 h-[400px]">
+                    <div class="p-5 flex items-center gap-3 border-b border-gray-100 dark:border-gray-700">
+                        <div class="p-2 bg-amber-500/10 rounded-lg text-amber-500">
+                            <span class="material-symbols-outlined">assignment</span>
+                        </div>
+                        <h3 class="font-bold text-lg">Instructions</h3>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                        <div class="space-y-3">
+                            {% for instruction in recent_instructions %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold">Part {{ instruction.part_type }}</p>
+                                    <p class="text-xs text-gray-400">{{ instruction.text|truncatewords:5 }}</p>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-400">No instructions added yet</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="p-4 grid grid-cols-2 gap-3 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{% url 'question_paper:instruction_list' %}"
+                            class="bg-primary text-white text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-primary/90 transition-colors text-center">Manage</a>
+                        <a href="{% url 'question_paper:instruction_add' %}"
+                            class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-bold py-2.5 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-1">
+                            <span class="material-symbols-outlined text-xs">add</span> Add New
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Table Section -->
+            <div
+                class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden mb-12">
+                <div
+                    class="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold">Recent Question Papers</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Latest papers added or generated by the
+                            system</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">search</span>
+                            <input
+                                class="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary w-full md:w-64"
+                                placeholder="Search papers..." type="text" />
+                        </div>
+                        <button
+                            class="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-500 hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined">filter_list</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 dark:bg-gray-700/50">
+                            <tr>
+                                <th
+                                    class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                    Paper ID</th>
+                                <th
+                                    class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                    Subject</th>
+                                <th
+                                    class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                    Exam Name</th>
+                                <th
+                                    class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                    Revision</th>
+                                <th
+                                    class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                    Status</th>
+                                <th
+                                    class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                    Max Marks</th>
+                                <th
+                                    class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                            {% for qp in recent_question_papers %}
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                <td class="px-6 py-4 text-sm font-semibold">{{ qp.question_paper_code }}</td>
+                                <td class="px-6 py-4 text-sm">{{ qp.subject_name }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ qp.exam_name|truncatewords:5 }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ qp.revesion }}</td>
+                                <td class="px-6 py-4">
+                                    {% with status=qp.get_status %}
+                                    {% if status == 'Complete' %}
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                        Complete
+                                    </span>
+                                    {% else %}
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                                        {{ status }}
+                                    </span>
+                                    {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ qp.maximum_mark|default:"N/A" }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-center gap-2">
+                                        <a href="{% url 'question_paper:review' qp.id %}"
+                                            class="p-1.5 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-600 transition-colors"
+                                            title="View/Download">
+                                            <span class="material-symbols-outlined text-lg">visibility</span>
+                                        </a>
+                                        {% if qp.get_status != 'Complete' %}
+                                        <a href="{% url 'question_paper:resume' qp.id %}"
+                                            class="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-600 transition-colors"
+                                            title="Resume Creation">
+                                            <span class="material-symbols-outlined text-lg">edit</span>
+                                        </a>
+                                        {% endif %}
+                                        <button
+                                            class="p-1.5 rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/40 text-amber-600 transition-colors">
+                                            <span class="material-symbols-outlined text-lg">download</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                    No question papers created yet
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                    <p class="text-xs text-gray-500">Showing {{ recent_question_papers|length }} of {{ total_question_papers }} results</p>
+                    <div class="flex gap-2">
+                        <button
+                            class="p-2 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-400 hover:text-primary transition-colors disabled:opacity-50"
+                            disabled>
+                            <span class="material-symbols-outlined text-sm">chevron_left</span>
+                        </button>
+                        <button
+                            class="p-2 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-400 hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-sm">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-auto px-6 py-8 border-t border-gray-200 dark:border-gray-800 text-center">
+            <p class="text-gray-500 text-sm">© 2023 Question Paper Management System. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+
+</html>

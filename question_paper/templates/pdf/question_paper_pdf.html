@@ -1,0 +1,307 @@
+{% load question_tags %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm 2cm 2cm 2.5cm;
+
+            @frame footer_frame {
+                -pdf-frame-content: footerContent;
+                bottom: 0cm;
+                height: 1cm;
+            }
+        }
+
+        body,
+        table,
+        th,
+        td,
+        p,
+        div,
+        span {
+            font-family: "Times New Roman";
+            font-size: 10.5pt;
+            line-height: 1.35;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        th {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .qp-table {
+            width: 16cm;
+            table-layout: fixed;
+        }
+
+        .col-qno {
+            width: 1.5cm;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .col-question {
+            width: 10.5cm;
+        }
+
+        .col-mo {
+            width: 2cm;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .col-cl {
+            width: 2cm;
+            text-align: center;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .section-title {
+            text-align: center;
+            font-weight: bold;
+            margin: 18px 0 6px;
+        }
+
+        .question-image-container {
+            text-align: center;
+            margin: 6px 0;
+            page-break-inside: avoid;
+        }
+
+        .question-img {
+            width: 4.5cm;
+            display: block;
+            margin: auto;
+        }
+
+        .or-text {
+            text-align: center;
+            font-weight: bold;
+            margin: 10pt 0;
+        }
+
+        #footerContent {
+            text-align: center;
+            font-size: 9.5pt;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <table style="border:none;width:100%;">
+        <tr>
+            <td style="border:none;">
+                TED ({{ qp.revesion }}) {{ qp.subject_code }}
+            </td>
+            <td style="border:none;" class="right">
+                Reg.No: __________<br>
+                Signature: __________
+            </td>
+        </tr>
+    </table>
+
+    <p class="center"><b>{{ qp.exam_name|upper }}</b></p>
+    <p class="center"><b>{{ qp.subject_name|upper }}</b></p>
+
+    <table style="border:none;width:100%;margin-bottom:10px;">
+        <tr>
+            <td style="border:none;">Time: {{ qp.time }} Hours</td>
+            <td style="border:none;" class="right">Maximum Marks: {{ qp.exam_marks }}</td>
+        </tr>
+    </table>
+
+    <!-- PART A -->
+    <p class="section-title">PART – A</p>
+    <p class="center"><i>{{ part_a.info }}</i></p>
+    <p class="right">
+        ({{ part_a.total|idiv:part_a.each_question_mark }} × {{ part_a.each_question_mark }} = {{ part_a.total }} Marks)
+    </p>
+
+    <table class="qp-table">
+        <tr>
+            <th class="col-qno">Q.No</th>
+            <th class="col-question">Question</th>
+            <th class="col-mo">Module Outcome</th>
+            <th class="col-cl">Cognitive Level</th>
+        </tr>
+
+        {% for q in questions_a %}
+        <tr>
+            <td class="col-qno">{{ forloop.counter }}</td>
+            <td class="col-question">
+                {% with ta=q.get_text_above_image tb=q.get_text_below_image %}
+                {% if ta %}{{ ta|linebreaksbr }}{% endif %}
+                {% if q.question_image %}
+                <div class="question-image-container">
+                    <img src="{{ q.question_image.url }}" class="question-img">
+                </div>
+                {% endif %}
+                {% if tb %}{{ tb|linebreaksbr }}{% endif %}
+                {% endwith %}
+            </td>
+            <td class="col-mo">
+                {% with mo=q.module_outcome|slice:"-2:" %}
+                M{{ q.module }}.{{ mo }}
+                {% endwith %}
+            </td>
+            <td class="col-cl">{{ q.level }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- PART B -->
+    <p class="section-title">PART – B</p>
+    <p class="center"><i>{{ part_b.info }}</i></p>
+    <p class="right">
+        ({{ part_b.required_questions }} × {{ part_b.each_questions_mark }} = {{ part_b.total }} Marks)
+    </p>
+
+    <table class="qp-table">
+        <tr>
+            <th class="col-qno">Q.No</th>
+            <th class="col-question">Question</th>
+            <th class="col-mo">Module Outcome</th>
+            <th class="col-cl">Cognitive Level</th>
+        </tr>
+
+        {% for q in questions_b %}
+        <tr>
+            <td class="col-qno">{{ forloop.counter }}</td>
+            <td class="col-question">
+                {% with ta=q.get_text_above_image tb=q.get_text_below_image %}
+                {% if ta %}{{ ta|linebreaksbr }}{% endif %}
+                {% if q.question_image %}
+                <div class="question-image-container">
+                    <img src="{{ q.question_image.url }}" class="question-img">
+                </div>
+                {% endif %}
+                {% if tb %}{{ tb|linebreaksbr }}{% endif %}
+                {% endwith %}
+            </td>
+            <td class="col-mo">
+                {% with mo=q.module_outcome|slice:"-2:" %}
+                M{{ q.module }}.{{ mo }}
+                {% endwith %}
+            </td>
+            <td class="col-cl">{{ q.level }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- PART C -->
+    <p class="section-title">PART – C</p>
+    <p class="center"><i>{{ part_c.info }}</i></p>
+    <p class="right">
+        ({{ part_c.required_questions }} × {{ part_c.each_questions_mark }} = {{ part_c.total }} Marks)
+    </p>
+
+    <table class="qp-table">
+        <tr>
+            <th class="col-qno">Q.No</th>
+            <th class="col-question">Question</th>
+            <th class="col-mo">Module Outcome</th>
+            <th class="col-cl">Cognitive Level</th>
+        </tr>
+
+        {% regroup questions_c by or_group_number as groups %}
+
+        {% for group in groups %}
+        {% with n1=forloop.counter0|add:forloop.counter0|add:3 %}
+        {% with n2=n1|add:1 %}
+
+        <!-- Question 1 Row -->
+        <tr>
+            <td class="col-qno" style="border-bottom:none;">{{ n1|roman }}</td>
+            <td class="col-question" style="border-bottom:none;">
+                {% with q=group.list.0 %}
+                {% with ta=q.get_text_above_image tb=q.get_text_below_image %}
+                {% if ta %}{{ ta|linebreaksbr }}{% endif %}
+                {% if q.question_image %}
+                <div class="question-image-container">
+                    <img src="{{ q.question_image.url }}" class="question-img">
+                </div>
+                {% endif %}
+                {% if tb %}{{ tb|linebreaksbr }}{% endif %}
+                {% endwith %}
+                {% endwith %}
+            </td>
+            <td class="col-mo" style="border-bottom:none;">
+                {% with mo=group.list.0.module_outcome|slice:"-2:" %}
+                M{{ group.list.0.module }}.{{ mo }}
+                {% endwith %}
+            </td>
+            <td class="col-cl" style="border-bottom:none;">{{ group.list.0.level }}</td>
+        </tr>
+
+        <!-- OR Divider Row (Continuous Borders) -->
+        <tr>
+            <td class="col-qno" style="border-top:none; border-bottom:none;"></td>
+            <td class="col-question"
+                style="text-align:center; font-weight:bold; padding:4pt 0; border-top:none; border-bottom:none;">OR</td>
+            <td class="col-mo" style="border-top:none; border-bottom:none;"></td>
+            <td class="col-cl" style="border-top:none; border-bottom:none;"></td>
+        </tr>
+
+        <!-- Question 2 Row -->
+        <tr>
+            <td class="col-qno" style="border-top:none;">{{ n2|roman }}</td>
+            <td class="col-question" style="border-top:none;">
+                {% with q=group.list.1 %}
+                {% with ta=q.get_text_above_image tb=q.get_text_below_image %}
+                {% if ta %}{{ ta|linebreaksbr }}{% endif %}
+                {% if q.question_image %}
+                <div class="question-image-container">
+                    <img src="{{ q.question_image.url }}" class="question-img">
+                </div>
+                {% endif %}
+                {% if tb %}{{ tb|linebreaksbr }}{% endif %}
+                {% endwith %}
+                {% endwith %}
+            </td>
+            <td class="col-mo" style="border-top:none;">
+                {% with mo=group.list.1.module_outcome|slice:"-2:" %}
+                M{{ group.list.1.module }}.{{ mo }}
+                {% endwith %}
+            </td>
+            <td class="col-cl" style="border-top:none;">{{ group.list.1.level }}</td>
+        </tr>
+        {% endwith %}
+        {% endwith %}
+        {% endfor %}
+    </table>
+
+    <!-- FOOTER
+    <div id="footerContent">
+        Page
+        <pdf:pagenumber /> of
+        <pdf:pagecount />
+    </div> -->
+
+</body>
+
+</html>

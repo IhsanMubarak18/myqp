@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-size: 9pt;
+            font-family: DejaVu Sans, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 3px;
+            vertical-align: middle;
+        }
+        .center { text-align: center; }
+        .bold   { font-weight: bold; }
+        .title  { text-align: center; font-weight: bold; font-size: 12pt; }
+        .subtitle { text-align: center; font-weight: bold; margin: 4px 0; }
+    </style>
+</head>
+<body>
+
+<!-- ================= TOP BLUEPRINT TABLE ================= -->
+<p class="title">BLUE PRINT</p>
+<p class="subtitle">Mark Distribution</p>
+
+<p><span class="bold">COURSE NAME :</span> {{ qp.subject_name|upper }}</p>
+<p>
+    <span class="bold">COURSE CODE :</span>
+    TED({{ qp.revesion }}){{ qp.subject_code }}
+    &nbsp;&nbsp;&nbsp;
+    <span class="bold">MAX MARK :</span> {{ total_marks_all }}
+</p>
+
+<table>
+    <!-- First header row -->
+    <tr>
+        <th rowspan="3" class="center">Module</th>
+        <th rowspan="3" class="center">Hr / Module</th>
+        <th rowspan="3" class="center">(hr / Σh) × {{ total_marks_all }}</th>
+
+        <th colspan="8" class="center">TYPE OF QUESTIONS</th>
+    </tr>
+    <tr>
+        <th colspan="2" class="center">PART A</th>
+        <th colspan="2" class="center">PART B</th>
+        <th colspan="2" class="center">PART C</th>
+        <th colspan="2" class="center">TOTAL</th>
+    </tr>
+    <tr>
+        <th class="center">No of Questions</th>
+        <th class="center">Marks</th>
+
+        <th class="center">No of Questions</th>
+        <th class="center">Marks</th>
+
+        <th class="center">No of Questions</th>
+        <th class="center">Marks</th>
+
+        <th class="center">No of Questions</th>
+        <th class="center">Marks</th>
+    </tr>
+
+    {% for row in module_rows %}
+    <tr>
+        <!-- Module name: I, II, III, IV -->
+        <td class="center">
+            {% if row.module == 1 %}I
+            {% elif row.module == 2 %}II
+            {% elif row.module == 3 %}III
+            {% elif row.module == 4 %}IV
+            {% else %}M{{ row.module }}{% endif %}
+        </td>
+
+        <!-- Hr / Module -->
+        <td class="center">
+            {% if row.hours %}{{ row.hours }}{% else %}&nbsp;{% endif %}
+        </td>
+
+        <!-- (hr / Σh) × Max -->
+        <td class="center">
+            {% if row.hrs_mark_share %}{{ row.hrs_mark_share }}{% else %}&nbsp;{% endif %}
+        </td>
+
+        <!-- PART A -->
+        <td class="center">{% if row.a_q %}{{ row.a_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center">{% if row.a_m %}{{ row.a_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <!-- PART B -->
+        <td class="center">{% if row.b_q %}{{ row.b_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center">{% if row.b_m %}{{ row.b_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <!-- PART C -->
+        <td class="center">{% if row.c_q %}{{ row.c_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center">{% if row.c_m %}{{ row.c_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <!-- TOTAL -->
+        <td class="center">{% if row.total_q %}{{ row.total_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center">{% if row.total_m %}{{ row.total_m }}{% else %}&nbsp;{% endif %}</td>
+    </tr>
+    {% endfor %}
+
+    <!-- Total row -->
+    <tr>
+        <td class="center bold">Total</td>
+        <td class="center">&nbsp;</td>
+        <td class="center">&nbsp;</td>
+
+        <td class="center bold">{% if module_totals.a_q %}{{ module_totals.a_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center bold">{% if module_totals.a_m %}{{ module_totals.a_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <td class="center bold">{% if module_totals.b_q %}{{ module_totals.b_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center bold">{% if module_totals.b_m %}{{ module_totals.b_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <td class="center bold">{% if module_totals.c_q %}{{ module_totals.c_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center bold">{% if module_totals.c_m %}{{ module_totals.c_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <td class="center bold">{% if module_totals.total_q %}{{ module_totals.total_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center bold">{% if module_totals.total_m %}{{ module_totals.total_m }}{% else %}&nbsp;{% endif %}</td>
+    </tr>
+</table>
+
+<!-- =============== COGNITIVE LEVEL TABLE (BOTTOM) ================= -->
+<p class="subtitle">Cognitive Level Wise Question Analysis</p>
+<p class="subtitle">Mark Distribution</p>
+
+<table>
+    <tr>
+        <th rowspan="2" class="center">Cognitive Level</th>
+        <th rowspan="2" class="center">% Marks</th>
+
+        <th colspan="2" class="center">PART A</th>
+        <th colspan="2" class="center">PART B</th>
+        <th colspan="2" class="center">PART C</th>
+        <th colspan="2" class="center">TOTAL</th>
+    </tr>
+    <tr>
+        <th class="center">No of Questions</th>
+        <th class="center">Marks</th>
+
+        <th class="center">No of Questions</th>
+        <th class="center">Marks</th>
+
+        <th class="center">No of Questions</th>
+        <th class="center">Marks</th>
+
+        <th class="center">No of Questions</th>
+        <th class="center">Marks</th>
+    </tr>
+
+    {% for row in level_rows %}
+    <tr>
+        <td class="center">
+            {% if row.code == "R" %}R
+            {% elif row.code == "U" %}U
+            {% elif row.code == "A" %}A
+            {% else %}{{ row.code }}{% endif %}
+        </td>
+        <td class="center">
+            {% if row.percent %}{{ row.percent }}{% else %}&nbsp;{% endif %}
+        </td>
+
+        <td class="center">{% if row.a_q %}{{ row.a_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center">{% if row.a_m %}{{ row.a_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <td class="center">{% if row.b_q %}{{ row.b_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center">{% if row.b_m %}{{ row.b_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <td class="center">{% if row.c_q %}{{ row.c_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center">{% if row.c_m %}{{ row.c_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <td class="center">{% if row.total_q %}{{ row.total_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center">{% if row.total_m %}{{ row.total_m }}{% else %}&nbsp;{% endif %}</td>
+    </tr>
+    {% endfor %}
+
+    <!-- total row like sample (Total / 100 / sums) -->
+    <tr>
+        <td class="center bold">Total</td>
+        <td class="center bold">
+            {% if level_totals.percent %}{{ level_totals.percent }}{% else %}&nbsp;{% endif %}
+        </td>
+
+        <td class="center bold">{% if level_totals.a_q %}{{ level_totals.a_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center bold">{% if level_totals.a_m %}{{ level_totals.a_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <td class="center bold">{% if level_totals.b_q %}{{ level_totals.b_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center bold">{% if level_totals.b_m %}{{ level_totals.b_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <td class="center bold">{% if level_totals.c_q %}{{ level_totals.c_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center bold">{% if level_totals.c_m %}{{ level_totals.c_m }}{% else %}&nbsp;{% endif %}</td>
+
+        <td class="center bold">{% if level_totals.total_q %}{{ level_totals.total_q }}{% else %}&nbsp;{% endif %}</td>
+        <td class="center bold">{% if level_totals.total_m %}{{ level_totals.total_m }}{% else %}&nbsp;{% endif %}</td>
+    </tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <style>
+        body {
+            font-size: 11pt;
+            font-family: DejaVu Sans, sans-serif;
+            line-height: 1.4;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+
+        th {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .center { text-align: center; }
+        .bold   { font-weight: bold; }
+
+        /* ===== Answer image fix ===== */
+        .answer-diagram {
+            margin-top: 6px;
+            text-align: center;
+        }
+
+        .answer-diagram img {
+            max-width: 160px;
+            max-height: 120px;
+            width: auto;
+            height: auto;
+
+            border: 1px solid #000;
+            padding: 3px;
+            background: #fff;
+
+            filter: grayscale(100%) contrast(120%);
+        }
+    </style>
+</head>
+
+<body>
+
+<p class="center bold">SCORING INDICATORS</p>
+
+<p>
+    <span class="bold">COURSE NAME :</span>
+    {{ qp.subject_name|upper }}
+</p>
+
+<p>
+    <span class="bold">COURSE CODE :</span>
+    TED({{ qp.revesion }}){{ qp.subject_code }}
+    &nbsp;&nbsp;&nbsp;
+    <span class="bold">QID :</span> __________
+</p>
+
+<table>
+
+    <!-- ===== TABLE HEADER ===== -->
+    <tr>
+        <th style="width:10%;">Q No</th>
+        <th>Scoring Indicators</th>
+        <th style="width:12%;">Split score</th>
+        <th style="width:12%;">Sub Total</th>
+        <th style="width:12%;">Total score</th>
+    </tr>
+
+    <!-- ===== PART A ===== -->
+    <tr>
+        <td></td>
+        <td class="center bold">PART A</td>
+        <td></td>
+        <td></td>
+        <td class="center">{{ questions_a|length }}</td>
+    </tr>
+
+    {% for q in questions_a %}
+    <tr>
+        <td class="center">I.{{ forloop.counter }}</td>
+
+        <td>
+            {{ q.answer }}
+        </td>
+
+        <td class="center">1</td>
+        <td class="center">1</td>
+
+        <td class="center">
+            {% if forloop.first %}
+                {{ questions_a|length }}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+
+    <!-- ===== PART B ===== -->
+    {% if part_b %}
+    <tr>
+        <td></td>
+        <td class="center bold">PART B</td>
+        <td></td>
+        <td></td>
+        <td class="center">{{ part_b.total }}</td>
+    </tr>
+
+    {% for q in questions_b %}
+    <tr>
+        <td class="center">II.{{ forloop.counter }}</td>
+
+        <td>
+            {% if q.answer_text %}
+                {{ q.answer_text }}
+            {% endif %}
+
+            {% if q.answer_equation %}
+                <br>{{ q.answer_equation }}
+            {% endif %}
+
+            {% if q.answer_image %}
+                <div class="answer-diagram">
+                    <img src="{{ q.answer_image.path }}">
+                </div>
+            {% endif %}
+        </td>
+
+        <td class="center">{{ part_b.each_questions_mark }}</td>
+        <td class="center">{{ part_b.each_questions_mark }}</td>
+
+        <td class="center">
+            {% if forloop.first %}
+                {{ part_b.total }}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+
+</table>
+
+</body>
+</html>

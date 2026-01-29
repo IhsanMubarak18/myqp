@@ -1,0 +1,489 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Paper Ready</title>
+    
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4c51bf, #667eea);
+            --success-gradient: linear-gradient(135deg, #10b981, #34d399);
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            
+            --shadow-lg: 0 25px 60px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 15px 40px rgba(0, 0, 0, 0.1);
+            --radius-xl: 24px;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #334155;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 50%, rgba(76, 81, 191, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .download-wrapper {
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+        }
+
+        .download-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .download-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--primary-gradient);
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--success-gradient);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 2rem;
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.3);
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .success-icon::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .download-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .download-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .download-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+
+        .download-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 1.25rem;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-5px);
+            border-color: transparent;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transition: height 0.3s ease;
+        }
+
+        .download-btn:hover::before {
+            height: 100%;
+            opacity: 0.05;
+        }
+
+        .btn-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .download-btn:hover .btn-icon {
+            transform: scale(1.1);
+        }
+
+        .btn-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .btn-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            transition: color 0.3s ease;
+        }
+
+        .download-btn:hover .btn-title {
+            color: #4c51bf;
+        }
+
+        .btn-desc {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .download-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin: 2.5rem 0;
+            padding: 2rem 0;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .download-footer {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .footer-icon {
+            color: #4c51bf;
+            font-size: 1.2rem;
+        }
+
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            margin: -12px 0 0 -12px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 3;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .download-wrapper {
+                padding: 15px;
+            }
+            
+            .download-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .download-title {
+                font-size: 1.8rem;
+            }
+            
+            .download-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .download-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem 0;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="download-wrapper">
+        <div class="download-card">
+            <!-- Success Icon -->
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+
+            <!-- Title -->
+            <h1 class="download-title">Question Paper Generated</h1>
+            <p class="download-subtitle">
+                Your examination documents are professionally formatted and ready for download in PDF format.
+            </p>
+
+            <!-- Download Buttons -->
+            <div class="download-buttons">
+                <a href="{% url 'question_paper:question_pdf' question_paper.id %}" class="download-btn" id="btnQuestion">
+                    <div class="btn-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="btn-content">
+                        <div class="btn-title">Question Paper</div>
+                        <div class="btn-desc">Complete exam paper with questions</div>
+                    </div>
+                </a>
+
+                <a href="{% url 'question_paper:answer_pdf' question_paper.id %}" class="download-btn" id="btnAnswer">
+                    <div class="btn-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div class="btn-content">
+                        <div class="btn-title">Answer Sheet</div>
+                        <div class="btn-desc">Detailed solutions and answers</div>
+                    </div>
+                </a>
+
+                <a href="{% url 'question_paper:blueprint_pdf' question_paper.id %}" class="download-btn" id="btnBlueprint">
+                    <div class="btn-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="btn-content">
+                        <div class="btn-title">Blueprint</div>
+                        <div class="btn-desc">Question distribution and marks</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Statistics -->
+            <div class="download-stats">
+                <div class="stat-item">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Documents</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">PDF</div>
+                    <div class="stat-label">High Quality</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-label">Verified</div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="download-footer">
+                <div class="footer-content">
+                    <i class="fas fa-info-circle footer-icon"></i>
+                    <div>
+                        <p class="mb-0">Your files are ready. You may close this window after downloading.</p>
+                        <small class="text-muted">All documents are generated with professional formatting.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add loading state to download buttons
+            const downloadButtons = document.querySelectorAll('.download-btn');
+            
+            downloadButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    // Add loading class
+                    this.classList.add('loading');
+                    
+                    // Store the original HTML
+                    const originalHTML = this.innerHTML;
+                    
+                    // Show loading indicator for 1.5 seconds then remove
+                    setTimeout(() => {
+                        this.classList.remove('loading');
+                        this.innerHTML = originalHTML;
+                    }, 1500);
+                });
+            });
+            
+            // Add animation to buttons on load
+            const buttons = document.querySelectorAll('.download-btn');
+            buttons.forEach((btn, index) => {
+                btn.style.opacity = '0';
+                btn.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    btn.style.transition = 'all 0.5s ease';
+                    btn.style.opacity = '1';
+                    btn.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+            
+            // Add confetti effect on success
+            const successIcon = document.querySelector('.success-icon');
+            successIcon.addEventListener('animationiteration', function() {
+                // You can add confetti effect here if needed
+            });
+        });
+    </script>
+</body>
+</html>

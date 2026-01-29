@@ -1,0 +1,1611 @@
+﻿{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Part C - OR Pattern Section{% endblock %}
+
+{% block container_class %}container-fluid{% endblock %}
+
+{% block content %}
+<!-- Add MathJax for equation rendering -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<div class="part-c-container">
+    <div class="container-fluid px-4">
+        <!-- Progress Indicator -->
+        <div class="progress-container mb-5">
+            <div class="d-flex justify-content-between position-relative">
+                <div class="position-relative text-center">
+                    <div class="progress-step completed">
+                        <i class="fas fa-random"></i>
+                    </div>
+                    <div class="step-label mt-2">
+                        <span class="fw-semibold">Configuration</span>
+                    </div>
+                </div>
+                <div class="progress-line">
+                    <div class="progress-fill {% if step >= 1 %}completed{% endif %}"></div>
+                </div>
+                <div class="position-relative text-center">
+                    <div class="progress-step {% if step >= 1 %}active{% else %}pending{% endif %}">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="step-label mt-2">
+                        <span
+                            class="fw-semibold {% if step >= 1 %}text-danger{% else %}text-muted{% endif %}">Questions</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= STEP 0 : CONFIGURATION ================= -->
+        {% if step == 0 %}
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="glass-card mb-4">
+                    <div class="card-header bg-danger">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h1 class="mb-2 text-white">
+                                    <i class="fas fa-random me-2"></i>
+                                    Part C - OR Pattern Configuration
+                                </h1>
+                                <p class="mb-0 opacity-75">Configure OR-pattern descriptive questions</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="bg-white bg-opacity-20 rounded-circle d-inline-flex p-3">
+                                    <i class="fas fa-exchange-alt fa-2x text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        {% if error_message %}
+                        <div class="alert alert-danger border-0 rounded-lg mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                                <div>{{ error_message }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <form method="post">
+                            {% csrf_token %}
+
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label fw-semibold">Total Questions (EVEN)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light">
+                                                <i class="fas fa-question-circle"></i>
+                                            </span>
+                                            <input type="number" name="num_questions" class="form-control" min="2"
+                                                step="2" required placeholder="2, 4, 6...">
+                                        </div>
+                                        <small class="text-muted">Must be an even number</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label fw-semibold">Required Questions</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light">
+                                                <i class="fas fa-check-circle"></i>
+                                            </span>
+                                            <input type="number" name="required_questions" class="form-control" min="1"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label fw-semibold">Marks per Question</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light">
+                                                <i class="fas fa-star"></i>
+                                            </span>
+                                            <input type="number" name="each_questions_mark" class="form-control" min="1"
+                                                required>
+                                            <span class="input-group-text bg-light">marks</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-danger border-0 rounded-lg mt-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-info-circle fa-2x text-white me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1 fw-semibold text-white">OR Pattern Information</h6>
+                                        <p class="mb-0 text-white">Questions will be grouped in pairs with OR options.
+                                            Students choose one from each pair.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-5 pt-3">
+                                <button type="submit" name="step" value="1" class="btn btn-danger btn-lg px-5 py-3">
+                                    <i class="fas fa-arrow-right me-2"></i>
+                                    Continue to Questions
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ================= STEP 1 : QUESTIONS ================= -->
+        {% if step == 1 %}
+        <div class="row">
+            <!-- LEFT COLUMN: Forms -->
+            <div class="col-lg-6">
+                <div class="glass-card mb-4">
+                    <div class="card-header bg-danger">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h1 class="mb-2 text-white">
+                                    <i class="fas fa-edit me-2"></i>
+                                    Part C - Question Details
+                                </h1>
+                                <div class="d-flex gap-2 mt-2">
+                                    <span class="badge bg-white bg-opacity-20 text-white">OR Pattern</span>
+                                    <span class="badge bg-white bg-opacity-20 text-white">{{ each_questions_mark }}
+                                        marks each</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="bg-white bg-opacity-20 rounded-circle d-inline-flex p-3">
+                                    <i class="fas fa-pen-nib fa-2x text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Error Message -->
+                        {% if error_message %}
+                        <div class="alert alert-danger border-0 rounded-lg mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                                <div>{{ error_message }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <!-- Section Info with Dropdown -->
+                            <div class="mb-4 bg-light p-3 rounded">
+                                <label class="form-label fw-semibold">Section Information</label>
+                                <div class="input-group mb-2">
+                                    <select class="form-select"
+                                        onchange="document.getElementById('infoBox').value = this.value; document.getElementById('infoBox').dispatchEvent(new Event('input'));">
+                                        <option value="">-- Select Predefined Instruction --</option>
+                                        {% for inst in instructions %}
+                                        <option value="{{ inst.text }}">{{ inst.text }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <textarea name="info" id="infoBox"
+                                    class="form-control {% if error_message and not request.POST.info %}is-invalid{% endif %}"
+                                    rows="2" placeholder="Special instructions..."
+                                    required>{{ request.POST.info }}</textarea>
+                                <div class="invalid-feedback">Please provide section instructions.</div>
+                            </div>
+
+                            <script>
+                                // Auto-highlight invalid fields based on error messages
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const errorDivs = document.querySelectorAll('.invalid-feedback.d-block');
+                                    errorDivs.forEach(div => {
+                                        const field = div.previousElementSibling;
+                                        if (field && (field.tagName === 'INPUT' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA')) {
+                                            field.classList.add('is-invalid');
+                                        }
+                                    });
+                                });
+                            </script>
+
+                            {{ formset.management_form }}
+
+                            <div class="questions-list">
+                                {% for form in formset %}
+                                <div class="question-item mb-4 p-3 border rounded bg-white shadow-sm position-relative"
+                                    id="question-row-{{ forloop.counter0 }}">
+                                    {% if forloop.counter|divisibleby:2 %}
+                                    <div
+                                        class="or-separator text-center my-2 p-2 bg-light border-top border-bottom fw-bold text-danger">
+                                        --- OR ---</div>
+                                    {% endif %}
+
+                                    <div
+                                        class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                                        <h5 class="m-0 text-danger">Question {{ forloop.counter }}</h5>
+                                        <span class="badge bg-light text-dark border">{{ each_questions_mark }}
+                                            marks</span>
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <!-- Module & Outcome Dropdowns -->
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-muted">Module</label>
+                                            {{ form.module }}
+                                            {% if form.module.errors %}
+                                            <div class="invalid-feedback d-block">{{ form.module.errors|join:", " }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-muted">Assessment</label>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    {{ form.module_outcome }}
+                                                    {% if form.module_outcome.errors %}
+                                                    <div class="invalid-feedback d-block">{{
+                                                        form.module_outcome.errors|join:", " }}</div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-6">
+                                                    {{ form.level }}
+                                                    {% if form.level.errors %}
+                                                    <div class="invalid-feedback d-block">{{ form.level.errors|join:", "
+                                                        }}</div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Question Text -->
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold text-muted">Question</label>
+                                            {{ form.question }}
+                                            <!-- Equation Helper Buttons for Question -->
+                                            <!-- Equation Helper Buttons for Question -->
+                                            <div class="equation-suggestions mt-2 p-2 bg-light rounded border">
+                                                <div class="row g-2">
+                                                    <div class="col-12">
+                                                        <div class="small text-muted mb-1 fw-bold">Basic & Operators
+                                                        </div>
+                                                        <div class="d-flex flex-wrap gap-1">
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary"
+                                                                data-eq="+">\(+\)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary"
+                                                                data-eq="-">\(-\)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary"
+                                                                data-eq="×">\(\times\)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary"
+                                                                data-eq="÷">\(\div\)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary"
+                                                                data-eq="=">\(=\)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="≠">\(
+                                                                \neq \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="±">\(
+                                                                \pm \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="≈">\(
+                                                                \approx \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="<">\(
+                                                                < \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq=">">\( > \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="≤">\( \leq \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="≥">\( \geq \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="∞">\( \infty \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="∝">\( \propto \)</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="small text-muted mb-1 fw-bold">Powers & Structures
+                                                        </div>
+                                                        <div class="d-flex flex-wrap gap-1">
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary"
+                                                                data-eq="²">\(x^2\)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary"
+                                                                data-eq="³">\(x^3\)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary"
+                                                                data-eq="\sqrt{ }">\( \sqrt{x} \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary"
+                                                                data-eq="\sqrt[ ]{ }">\( \sqrt[n]{x} \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary"
+                                                                data-eq="\frac{ }{ }">\( \frac{x}{y} \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="(">\(
+                                                                ( \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq=")">\(
+                                                                ) \)</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="small text-muted mb-1 fw-bold">Greek Lower</div>
+                                                        <div class="d-flex flex-wrap gap-1">
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="α">\(
+                                                                \alpha \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="β">\(
+                                                                \beta \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="γ">\(
+                                                                \gamma \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="δ">\(
+                                                                \delta \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="ε">\(
+                                                                \epsilon \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="θ">\(
+                                                                \theta \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="λ">\(
+                                                                \lambda \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="μ">\(
+                                                                \mu \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="π">\(
+                                                                \pi \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="ρ">\(
+                                                                \rho \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="σ">\(
+                                                                \sigma \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="τ">\(
+                                                                \tau \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="φ">\(
+                                                                \phi \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="ψ">\(
+                                                                \psi \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="ω">\(
+                                                                \omega \)</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="small text-muted mb-1 fw-bold">Greek Upper & Physics
+                                                        </div>
+                                                        <div class="d-flex flex-wrap gap-1">
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="Δ">\(
+                                                                \Delta \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="Θ">\(
+                                                                \Theta \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="Λ">\(
+                                                                \Lambda \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="Π">\(
+                                                                \Pi \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="Σ">\(
+                                                                \Sigma \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="Φ">\(
+                                                                \Phi \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="Ω">\(
+                                                                \Omega \)</button>
+                                                            <div class="vr mx-1"></div>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="ℏ">\(
+                                                                \hbar \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="Å">\(
+                                                                \text{Å} \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="∫">\(
+                                                                \int \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="∬">\(
+                                                                \iint \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="∮">\(
+                                                                \oint \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="∂">\(
+                                                                \partial \)</button>
+                                                            <button type="button"
+                                                                class="btn btn-xs btn-outline-secondary" data-eq="∇">\(
+                                                                \nabla \)</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% if form.question.errors %}
+                                            <div class="invalid-feedback d-block">{{ form.question.errors|join:", " }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+
+                                        <!-- Image Upload -->
+                                        <div class="col-md-12">
+                                            <a class="text-decoration-none small text-danger" data-bs-toggle="collapse"
+                                                href="#imgOptions{{ forloop.counter0 }}">
+                                                <i class="fas fa-image me-1"></i> Add Question Image
+                                            </a>
+                                            <div class="collapse mt-2" id="imgOptions{{ forloop.counter0 }}">
+                                                <div class="card card-body bg-light">
+                                                    {{ form.question_image }}
+                                                    <div class="mt-2 row">
+                                                        <div class="col-12">{{ form.question_image_position }}</div>
+                                                    </div>
+                                                    <div class="mt-2 text-below-container" style="display:none;">
+                                                        <label class="small">Text Below Image</label>
+                                                        {{ form.text_below_image }}
+                                                    </div>
+                                                    <img id="q-preview-{{ forloop.counter0 }}"
+                                                        class="image-preview mt-2" style="max-height: 150px;">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Answer Section -->
+                                        <div class="col-12">
+                                            <hr class="my-2">
+                                            <label class="form-label small fw-bold text-danger">Answer Details</label>
+                                            <div class="row g-2">
+                                                <div class="col-md-12">
+                                                    {{ form.answer_text }}
+                                                </div>
+
+                                                <!-- Equation Field with Buttons -->
+                                                <div class="col-md-6">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <label class="small text-muted">Equation</label>
+                                                        <div class="math-preview badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25"
+                                                            id="preview-{{ form.answer_equation.id_for_label }}"
+                                                            style="min-height: 24px; font-size: 1.1em; padding: 4px 8px;">
+                                                            \(\)</div>
+                                                    </div>
+                                                    <textarea name="{{ form.answer_equation.html_name }}"
+                                                        id="{{ form.answer_equation.id_for_label }}"
+                                                        class="form-control form-control-sm equation-box equation-input"
+                                                        rows="2" placeholder="LaTeX (e.g. \sqrt{x})"
+                                                        oninput="renderMathPreview(this)">{{ form.answer_equation.value|default_if_none:"" }}</textarea>
+
+                                                    <!-- Equation Helper Buttons -->
+                                                    <div class="equation-suggestions mt-2 p-2 bg-light rounded border">
+                                                        <div class="row g-2">
+                                                            <div class="col-12">
+                                                                <div class="small text-muted mb-1 fw-bold">Basic &
+                                                                    Operators</div>
+                                                                <div class="d-flex flex-wrap gap-1">
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="+">\(+\)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="-">\(-\)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="×">\(\times\)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="÷">\(\div\)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="=">\(=\)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="≠">\( \neq \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="±">\( \pm \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="≈">\( \approx \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="<">\( < \)</button>
+                                                                            <button type="button"
+                                                                                class="btn btn-xs btn-outline-secondary"
+                                                                                data-eq=">">\( > \)</button>
+                                                                            <button type="button"
+                                                                                class="btn btn-xs btn-outline-secondary"
+                                                                                data-eq="≤">\( \leq \ right)</button>
+                                                                            <button type="button"
+                                                                                class="btn btn-xs btn-outline-secondary"
+                                                                                data-eq="≥">\( \geq \)</button>
+                                                                            <button type="button"
+                                                                                class="btn btn-xs btn-outline-secondary"
+                                                                                data-eq="∞">\( \infty \)</button>
+                                                                            <button type="button"
+                                                                                class="btn btn-xs btn-outline-secondary"
+                                                                                data-eq="∝">\( \propto \)</button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <div class="small text-muted mb-1 fw-bold">Powers &
+                                                                    Structures</div>
+                                                                <div class="d-flex flex-wrap gap-1">
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="²">\(x^2\)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="³">\(x^3\)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="\sqrt{ }">\( \sqrt{x} \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="\sqrt[ ]{ }">\( \sqrt[n]{x}
+                                                                        \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="\frac{ }{ }">\( \frac{x}{y}
+                                                                        \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="(">\( ( \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq=")">\( ) \)</button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <div class="small text-muted mb-1 fw-bold">Greek Lower
+                                                                </div>
+                                                                <div class="d-flex flex-wrap gap-1">
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="α">\( \alpha \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="β">\( \beta \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="γ">\( \gamma \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="δ">\( \delta \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="ε">\( \epsilon \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="θ">\( \theta \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="λ">\( \lambda \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="μ">\( \mu \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="π">\( \pi \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="ρ">\( \rho \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="σ">\( \sigma \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="τ">\( \tau \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="φ">\( \phi \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="ψ">\( \psi \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="ω">\( \omega \)</button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <div class="small text-muted mb-1 fw-bold">Greek Upper &
+                                                                    Physics</div>
+                                                                <div class="d-flex flex-wrap gap-1">
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="Δ">\( \Delta \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="Θ">\( \Theta \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="Λ">\( \Lambda \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="Π">\( \Pi \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="Σ">\( \Sigma \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="Φ">\( \Phi \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="Ω">\( \Omega \)</button>
+                                                                    <div class="vr mx-1"></div>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="ℏ">\( \hbar \)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="Å">\( \text{Å} \right)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="∫">\( \int \right)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="∬">\( \iint \right)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="∮">\( \oint \right)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="∂">\( \partial \right)</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-xs btn-outline-secondary"
+                                                                        data-eq="∇">\( \nabla \right)</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label class="small text-muted mb-1">Image Answer</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <label class="input-group-text"><i
+                                                                class="fas fa-image"></i></label>
+                                                        {{ form.answer_image }}
+                                                    </div>
+                                                    <img id="a-preview-{{ forloop.counter0 }}"
+                                                        class="image-preview mt-2" style="max-height: 100px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <input type="hidden" name="required_questions" value="{{ required_questions }}">
+                            <input type="hidden" name="each_questions_mark" value="{{ each_questions_mark }}">
+
+                            <div class="d-flex justify-content-between mt-5 pt-4 border-top">
+                                <a href="?step=0" class="btn btn-outline-secondary px-4 py-2">
+                                    <i class="fas fa-arrow-left me-2"></i> Back
+                                </a>
+                                <button type="submit" class="btn btn-danger px-5 py-2">
+                                    <i class="fas fa-save me-2"></i> Save Part C
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> <!-- End col-lg-7 -->
+
+            <!-- RIGHT COLUMN: Live Preview -->
+            <div class="col-lg-6">
+                <div class="sticky-top" style="top: 20px; z-index: 900;">
+                    <div class="glass-card border-primary border-2">
+                        <div class="card-header bg-white text-dark border-bottom">
+                            <h5 class="mb-0"><i class="fas fa-eye me-2 text-primary"></i>Live Preview</h5>
+                        </div>
+                        <div class="card-body bg-white paper-preview" style="max-height: 80vh; overflow-y: auto;">
+                            <!-- PDF-STYLE HEADER -->
+                            <div class="pdf-header" style="font-family: 'Times New Roman', serif; line-height: 1.4;">
+                                <!-- Header Row 1 -->
+                                <div class="d-flex justify-content-between align-items-start mb-2"
+                                    style="font-size:11pt;">
+                                    <div>TED({{ question_paper.revesion }}){{ question_paper.subject_code }}</div>
+                                    <div class="text-end">
+                                        Reg.No: __________<br>
+                                        Signature: __________
+                                    </div>
+                                </div>
+
+                                <div class="text-center fw-bold mb-2">
+                                    <div style="font-size:11pt;">DIPLOMA EXAMINATION IN ENGINEERING / TECHNOLOGY</div>
+                                    <div style="font-size:11pt; text-transform:uppercase;">{{
+                                        question_paper.subject_name }}</div>
+                                </div>
+
+                                <!-- Header Row 3: Marks & Time -->
+                                <div class="d-flex justify-content-between align-items-center mb-1"
+                                    style="font-size:11pt;">
+                                    <div>Maximum Marks: {{ question_paper.exam_marks }}</div>
+                                    <div class="text-end">Time: {{ question_paper.time }} Hours</div>
+                                </div>
+
+                                {% if question_paper.part_a_details %}
+                                <!-- PART A PREVIEW -->
+                                <div class="text-center fw-bold"
+                                    style="margin: 20px 0 5px; font-size:11pt; border-top: 1px dashed #ccc; padding-top: 10px;">
+                                    PART - A
+                                </div>
+                                <div class="mb-3 position-relative">
+                                    <div class="text-center fst-italic" style="font-size: 10pt;">
+                                        {{ question_paper.part_a_details.info }}
+                                    </div>
+                                    <div style="text-align: right; font-weight: bold; font-size: 10pt;">
+                                        ({{ question_paper.part_a_details.questions.count }} × {{
+                                        question_paper.part_a_details.each_question_mark }} = {{
+                                        question_paper.part_a_details.total }})
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <table class="qp-table" style="width:100%; border-collapse: collapse;">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-qno">Q.No</th>
+                                                <th class="col-question">Question</th>
+                                                <th class="col-mo">Module Outcome</th>
+                                                <th class="col-cl">Cognitive Level</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for q in question_paper.part_a_details.questions.all %}
+                                            <tr>
+                                                <td class="col-qno">{{ forloop.counter }}</td>
+                                                <td class="col-question">
+                                                    {{ q.question|linebreaksbr }}
+                                                    {% if q.question_image %}
+                                                    <img src="{{ q.question_image.url }}" class="img-fluid"
+                                                        style="filter: grayscale(100%);">
+                                                    {% if q.question_image_position == 'middle' and q.text_below_image %}<br>{{ q.text_below_image|linebreaksbr }}
+                                                    {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="col-mo">{{ q.module_outcome }}</td>
+                                                <td class="col-cl">{{ q.level }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+
+                                {% if question_paper.part_b_details %}
+                                <!-- PART B PREVIEW -->
+                                <div class="text-center fw-bold"
+                                    style="margin: 20px 0 5px; font-size:11pt; border-top: 1px dashed #ccc; padding-top: 10px;">
+                                    PART - B
+                                </div>
+                                <div class="mb-3 position-relative">
+                                    <div class="text-center fst-italic" style="font-size: 10pt;">
+                                        {{ question_paper.part_b_details.info }}
+                                    </div>
+                                    <div style="text-align: right; font-weight: bold; font-size: 10pt;">
+                                        ({{ question_paper.part_b_details.required_questions }} × {{
+                                        question_paper.part_b_details.each_questions_mark }} = {{
+                                        question_paper.part_b_details.total }})
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <table class="qp-table" style="width:100%; border-collapse: collapse;">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-qno">Q.No</th>
+                                                <th class="col-question">Question</th>
+                                                <th class="col-mo">Module Outcome</th>
+                                                <th class="col-cl">Cognitive Level</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for q in question_paper.part_b_details.questions.all %}
+                                            <tr>
+                                                <td class="col-qno">{{ forloop.counter }}</td>
+                                                <td class="col-question">
+                                                    {{ q.question|linebreaksbr }}
+                                                    {% if q.question_image %}
+                                                    <img src="{{ q.question_image.url }}" class="img-fluid"
+                                                        style="filter: grayscale(100%);">
+                                                    {% if q.question_image_position == 'middle' and q.text_below_image %}<br>{{ q.text_below_image|linebreaksbr }}
+                                                    {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="col-mo">{{ q.module_outcome }}</td>
+                                                <td class="col-cl">{{ q.level }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+
+                                <div class="text-center fw-bold"
+                                    style="margin: 20px 0 5px; font-size:11pt; border-top: 1px dashed #ccc; padding-top: 10px;">
+                                    PART - C
+                                </div>
+
+                                <!-- Section Info Preview -->
+                                <div class="mb-3 position-relative">
+                                    <div id="section-info-preview" class="text-center fst-italic"
+                                        style="font-size: 10pt;">
+                                        <!-- Will be updated via JS -->
+                                    </div>
+                                    <div style="text-align: right; font-weight: bold; font-size: 10pt;">
+                                        ({{ required_questions }} × {{ each_questions_mark }} = {{
+                                        total_marks|default:0 }})
+                                    </div>
+                                </div>
+
+                                <!-- Table Header -->
+                                <div class="mb-0">
+                                    <table class="qp-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-qno">Q.No</th>
+                                                <th class="col-question">Question</th>
+                                                <th class="col-mo">Module Outcome</th>
+                                                <th class="col-cl">Cognitive Level</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="preview-questions-container">
+                                            <!-- JS will populate this -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .progress-container {
+        padding: 2rem;
+    }
+
+    .progress-step {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .progress-step.completed {
+        background: linear-gradient(135deg, #4c51bf, #667eea);
+        color: white;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .progress-step.active {
+        background: linear-gradient(135deg, #4c51bf, #667eea);
+        color: white;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .progress-step.pending {
+        background: #e2e8f0;
+        color: #94a3b8;
+    }
+
+    .progress-line {
+        position: absolute;
+        top: 25px;
+        left: 25%;
+        right: 25%;
+        height: 4px;
+        background: #e2e8f0;
+        z-index: 1;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #4c51bf, #667eea);
+        transition: width 0.3s ease;
+    }
+
+    .progress-fill.completed {
+        width: 100%;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header.bg-danger {
+        background: linear-gradient(135deg, #4c51bf, #667eea) !important;
+        color: white;
+        border-radius: 16px 16px 0 0 !important;
+        padding: 1.5rem !important;
+    }
+
+    .question-card {
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .question-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 8px 30px rgba(239, 68, 68, 0.1);
+    }
+
+    .or-badge {
+        position: absolute;
+        top: -10px;
+        right: 15px;
+        z-index: 10;
+    }
+
+    .or-badge .badge {
+        font-size: 0.8rem;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 4px 10px rgba(34, 50, 225, 0.3);
+    }
+
+    .question-number {
+        font-size: 1.1rem;
+        color: #4c51bf;
+        background: #fee2e2;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+    }
+
+    .upload-area {
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+    }
+
+    .upload-area:hover {
+        border-color: #667eea;
+        background: #f1f5f9;
+    }
+
+    .image-preview {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+        display: none;
+        margin-top: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .equation-suggestions {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .equation-suggestions button {
+        transition: all 0.2s ease;
+    }
+
+    .equation-suggestions button:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #4c51bf, #667eea);
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 0.75rem 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    .input-group-text {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-right: none;
+    }
+
+    .btn-outline-secondary {
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+    }
+
+    .paper-preview {
+        font-family: "Times New Roman", serif;
+        font-size: 10.5pt;
+        line-height: 1.35;
+        color: #000;
+        padding: 20px;
+    }
+
+    .paper-preview table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    .paper-preview th,
+    .paper-preview td {
+        border: 1px solid #000;
+        padding: 5px;
+        vertical-align: top;
+        word-wrap: break-word;
+    }
+
+    .paper-preview th {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    /* Column Widths */
+    .col-qno {
+        width: 8%;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .col-question {
+        width: 68%;
+    }
+
+    .col-mo {
+        width: 12%;
+        text-align: center;
+    }
+
+    .col-cl {
+        width: 12%;
+        text-align: center;
+    }
+
+    .paper-preview img {
+        display: block;
+        margin: 5px auto;
+        max-width: 100%;
+        height: auto;
+        filter: grayscale(100%);
+    }
+
+    .image-preview {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+        display: none;
+        margin-top: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        filter: grayscale(100%);
+    }
+
+    .section-title {
+        text-align: center;
+        font-weight: bold;
+        margin: 18px 0 6px;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    .partc-row td {
+        padding: 6px;
+    }
+
+    .or-row td {
+        border: none !important;
+        padding: 10px 0;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .btn-xs {
+        padding: 0.1rem 0.4rem;
+        font-size: 0.75rem;
+        border-radius: 0.2rem;
+    }
+</style>
+
+<script>
+    // Toggle Text Below Image field based on image position
+    function toggleTextBelowImageField(selectElement) {
+        const formRow = selectElement.closest('.question-item');
+        if (!formRow) return;
+        const textBelowContainer = formRow.querySelector('.text-below-container');
+
+        if (selectElement.value === 'middle') {
+            if (textBelowContainer) textBelowContainer.style.display = 'block';
+        } else {
+            if (textBelowContainer) textBelowContainer.style.display = 'none';
+        }
+    }
+
+    // Initialize all image position selects
+    function initializeImagePositionSelects() {
+        const imagePositionSelects = document.querySelectorAll('select[name*="question_image_position"]');
+        imagePositionSelects.forEach(select => {
+            // Initial state
+            toggleTextBelowImageField(select);
+
+            // Add event listener
+            select.addEventListener('change', function () {
+                toggleTextBelowImageField(this);
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize image position functionality
+        initializeImagePositionSelects();
+
+        // Image preview functionality
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.addEventListener('change', function (e) {
+                const previewId = this.id.includes('question') ?
+                    'q-preview-' + this.id.split('_').pop() :
+                    'a-preview-' + this.id.split('_').pop();
+                const preview = document.getElementById(previewId);
+                const file = e.target.files[0];
+
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File size must be less than 5MB');
+                        this.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        if (preview) {
+                            preview.src = e.target.result;
+                            preview.style.display = 'block';
+                        }
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        // --- Dependent Dropdown Logic (Module -> Outcome) ---
+        function filterModuleOutcomes(moduleSelect) {
+            const outcomeSelectId = moduleSelect.id.replace('-module', '-module_outcome');
+            const outcomeSelect = document.getElementById(outcomeSelectId);
+
+            if (!outcomeSelect) return;
+
+            const selectedModule = moduleSelect.value;
+            const options = outcomeSelect.querySelectorAll('option');
+
+            options.forEach(opt => {
+                const val = opt.value;
+                if (!val) {
+                    opt.style.display = 'block';
+                    return;
+                }
+
+                const prefix = "M" + selectedModule + ".";
+
+                if (selectedModule && val.startsWith(prefix)) {
+                    opt.style.display = 'block';
+                } else if (!selectedModule) {
+                    opt.style.display = 'block';
+                } else {
+                    opt.style.display = 'none';
+                }
+            });
+
+            const currentVal = outcomeSelect.value;
+            const currentOpt = outcomeSelect.querySelector(`option[value="${currentVal}"]`);
+            if (currentOpt && currentOpt.style.display === 'none') {
+                outcomeSelect.value = "";
+            }
+        }
+
+        // Function to sync module between OR pairs
+        function syncModuleSelection(changedSelect) {
+            // Get current form index
+            const match = changedSelect.id.match(/form-(\d+)-module/);
+            if (!match) return;
+
+            const currentIndex = parseInt(match[1]);
+            let pairIndex;
+
+            if (currentIndex % 2 === 0) {
+                // Even index (0, 2, 4...): This is the Main question. Pair is Next (1, 3, 5...)
+                pairIndex = currentIndex + 1;
+            } else {
+                // Odd index (1, 3, 5...): This is the OR question. Pair is Previous (0, 2, 4...)
+                pairIndex = currentIndex - 1;
+            }
+
+            const pairSelectId = `id_form-${pairIndex}-module`;
+            const pairSelect = document.getElementById(pairSelectId);
+
+            if (pairSelect) {
+                // Update value
+                pairSelect.value = changedSelect.value;
+                // Trigger filter for the pair
+                filterModuleOutcomes(pairSelect);
+
+                // Also handle disabling/styling for the paired select
+                if (changedSelect.value) {
+                    pairSelect.style.pointerEvents = 'none';
+                    pairSelect.style.backgroundColor = '#e9ecef';
+                    pairSelect.tabIndex = -1;
+                } else {
+                    pairSelect.style.pointerEvents = 'auto';
+                    pairSelect.style.backgroundColor = '';
+                    pairSelect.tabIndex = 0;
+                }
+            }
+        }
+
+        const moduleSelects = document.querySelectorAll('select[name$="-module"]');
+        moduleSelects.forEach(select => {
+            // Initial filter
+            filterModuleOutcomes(select);
+
+            select.addEventListener('change', function () {
+                // 1. Filter own outcomes
+                filterModuleOutcomes(this);
+                // 2. Sync with pair
+                syncModuleSelection(this);
+            });
+        });
+
+        // Global function for Math preview
+        window.renderMathPreview = function (input) {
+            const previewId = "preview-" + input.id;
+            const previewElement = document.getElementById(previewId);
+            if (!previewElement) return;
+
+            const latex = input.value.trim();
+            if (latex) {
+                previewElement.innerHTML = "\\(" + latex + "\\)";
+            } else {
+                previewElement.innerHTML = "\\(\\)";
+            }
+
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([previewElement]).catch((err) => console.log(err));
+            }
+        };
+
+        document.addEventListener("click", function (e) {
+            const symbolBtn = e.target.closest("[data-eq]");
+            if (!symbolBtn) return;
+
+            const symbol = symbolBtn.dataset.eq;
+            if (!symbol) return;
+
+            // Find closest suggestion container
+            const btnContainer = e.target.closest(".equation-suggestions");
+            if (!btnContainer) return;
+
+            // Find the sibling input/textarea
+            const parent = btnContainer.parentElement;
+            let input = parent.querySelector("input, textarea");
+
+            if (!input) {
+                // Fallback search
+                let prev = btnContainer.previousElementSibling;
+                while (prev) {
+                    if (prev.tagName === 'INPUT' || prev.tagName === 'TEXTAREA') {
+                        input = prev;
+                        break;
+                    }
+                    prev = prev.previousElementSibling;
+                }
+            }
+
+            if (!input) return;
+
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+
+            // Insert symbol
+            input.value = input.value.slice(0, start) + symbol + input.value.slice(end);
+
+            input.focus();
+
+            // If symbol has braces, place cursor inside
+            if (symbol.includes('{ }')) {
+                const offset = symbol.indexOf('{ ') + 1;
+                input.selectionStart = input.selectionEnd = start + offset;
+            } else {
+                input.selectionStart = input.selectionEnd = start + symbol.length;
+            }
+
+            // Trigger updates
+            input.dispatchEvent(new Event('input'));
+
+            // Update preview if it exists
+            if (input.classList.contains('equation-input')) {
+                renderMathPreview(input);
+            }
+        });
+
+        // Animate items on load
+        const items = document.querySelectorAll('.question-item');
+        items.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                item.style.transition = 'all 0.5s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Add visual OR pattern indication
+        const questionCards = document.querySelectorAll('.question-card');
+        questionCards.forEach((card, index) => {
+            if ((index + 1) % 2 === 0) {
+                // Add connecting line for OR pairs (optional)
+                const prevCard = questionCards[index - 1];
+                if (prevCard) {
+                    // You can add visual connection here if needed
+                }
+            }
+        });
+    });
+</script>
+
+<!-- Sub-question functionality -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Function to toggle sub-question fields
+        function toggleSubQuestionFields(checkbox) {
+            const formIndex = checkbox.name.match(/form-(\d+)-/)[1];
+            const parentField = document.getElementById(`id_form-${formIndex}-parent_question`);
+            const letterField = document.getElementById(`id_form-${formIndex}-sub_question_letter`);
+            const parentContainer = parentField ? parentField.closest('.form-group') : null;
+            const letterContainer = letterField ? letterField.closest('.form-group') : null;
+
+            if (checkbox.checked) {
+                if (parentContainer) parentContainer.style.display = 'block';
+                if (letterContainer) letterContainer.style.display = 'block';
+                if (parentField) parentField.required = true;
+                if (letterField) letterField.required = true;
+            } else {
+                if (parentContainer) parentContainer.style.display = 'none';
+                if (letterContainer) letterContainer.style.display = 'none';
+                if (parentField) parentField.required = false;
+                if (letterField) letterField.required = false;
+                if (parentField) parentField.value = '';
+                if (letterField) letterField.value = '';
+            }
+        }
+
+        // Initialize all checkboxes
+        document.querySelectorAll('input[type="checkbox"][id*="is_sub_question"]').forEach(function (checkbox) {
+            // Initial state
+            toggleSubQuestionFields(checkbox);
+
+            // Add event listener
+            checkbox.addEventListener('change', function () {
+                toggleSubQuestionFields(this);
+            });
+        });
+
+        // --- Live Preview Logic (Part C - OR Pattern) ---
+        const container = document.getElementById('preview-questions-container');
+        const infoBox = document.getElementById('infoBox');
+        const infoPreview = document.getElementById('section-info-preview');
+        const totalForms = parseInt(document.getElementById('id_form-TOTAL_FORMS')?.value || 0);
+        const imageMap = {}; // { formId: dataUrl }
+
+        // Helper for Roman
+        function toRoman(num) {
+            if (num < 1) return "";
+            if (num >= 40) return "XL";
+            if (num >= 10) return "X" + toRoman(num - 10);
+            if (num >= 9) return "IX" + toRoman(num - 9);
+            if (num >= 5) return "V" + toRoman(num - 5);
+            if (num >= 4) return "IV" + toRoman(num - 4);
+            if (num >= 1) return "I" + toRoman(num - 1);
+            return "";
+        }
+
+        function updatePreview() {
+            // Update Info
+            if (infoBox && infoPreview) {
+                infoPreview.innerText = infoBox.value;
+            }
+
+            let html = '';
+
+            // Loop in pairs (Part C is always pairs)
+            for (let i = 0; i < totalForms; i += 2) {
+                // --- Question 1 (i) ---
+                const q1Text = document.getElementById(`id_form-${i}-question`)?.value || '';
+                const outcome = document.getElementById(`id_form-${i}-module_outcome`)?.value || '';
+                const level = document.getElementById(`id_form-${i}-level`)?.value || '';
+
+                // --- Question 2 (i+1) ---
+                const nextIndex = i + 1;
+                let q2Text = '';
+                if (nextIndex < totalForms) {
+                    q2Text = document.getElementById(`id_form-${nextIndex}-question`)?.value || '';
+                }
+
+                // If both empty and not first pair, skip?
+                if (!q1Text && !q2Text && i > 0) continue;
+
+                // --- Process Q1 ---
+                let contentHtml1 = q1Text.replace(/\n/g, '<br>');
+                const imgId1 = `id_form-${i}-question_image`;
+                const imgSrc1 = imageMap[imgId1];
+                const imgPos1 = document.getElementById(`id_form-${i}-question_image_position`)?.value || 'top';
+                const textBelow1 = document.getElementById(`id_form-${i}-text_below_image`)?.value || '';
+
+                if (imgSrc1) {
+                    const imgHtml = `<img src="${imgSrc1}" style="width:4.5cm; height:auto; object-fit:contain; display:block; margin:5px auto; border:none; padding:0; background:transparent;">`;
+                    if (imgPos1 === 'top') contentHtml1 = contentHtml1 + imgHtml;
+                    else if (imgPos1 === 'bottom') contentHtml1 = imgHtml + contentHtml1;
+                    else if (imgPos1 === 'middle') contentHtml1 = contentHtml1 + imgHtml + (textBelow1 ? '<br>' + textBelow1.replace(/\n/g, '<br>') : '');
+                }
+
+                // --- Process Q2 ---
+                let contentHtml2 = q2Text.replace(/\n/g, '<br>');
+                const imgId2 = `id_form-${nextIndex}-question_image`;
+                const imgSrc2 = imageMap[imgId2];
+                const imgPos2 = document.getElementById(`id_form-${nextIndex}-question_image_position`)?.value || 'top';
+                const textBelow2 = document.getElementById(`id_form-${nextIndex}-text_below_image`)?.value || '';
+
+                if (imgSrc2) {
+                    const imgHtml = `<img src="${imgSrc2}" style="width:4.5cm; height:auto; object-fit:contain; display:block; margin:5px auto; border:none; padding:0; background:transparent;">`;
+                    if (imgPos2 === 'top') contentHtml2 = contentHtml2 + imgHtml;
+                    else if (imgPos2 === 'bottom') contentHtml2 = imgHtml + contentHtml2;
+                    else if (imgPos2 === 'middle') contentHtml2 = contentHtml2 + imgHtml + (textBelow2 ? '<br>' + textBelow2.replace(/\n/g, '<br>') : '');
+                }
+
+                // Group Number: (i/2) + 1. PDF: (1-based index) + 2 -> Roman
+                const groupIdx = (i / 2) + 1;
+                const romanNum = toRoman(groupIdx + 2);
+
+                // Construct Table Rows
+                // Row 1: Q1
+                html += `
+                <tr class="partc-row">
+                    <td class="col-qno" rowspan="3">${romanNum}</td>
+                    <td class="col-question">
+                        <b>(i)</b><br>
+                        ${contentHtml1}
+                    </td>
+                    <td class="col-mo" rowspan="3">
+                        ${outcome}
+                    </td>
+                    <td class="col-cl" rowspan="3">${level}</td>
+                </tr>`;
+
+                // Row 2: OR
+                html += `
+                <tr class="or-row">
+                    <td class="or-text">OR</td>
+                </tr>`;
+
+                // Row 3: Q2
+                html += `
+                <tr class="partc-row">
+                    <td class="col-question">
+                        <b>(ii)</b><br>
+                        ${contentHtml2}
+                    </td>
+                </tr>`;
+            }
+
+            if (container) {
+                container.innerHTML = html;
+                if (window.MathJax) {
+                    MathJax.typesetPromise([container]);
+                }
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            const formId = e.target.id;
+            const previewId = formId.includes('question') ?
+                'q-preview-' + formId.split('-')[1] :
+                'a-preview-' + formId.split('-')[1];
+            const preview = document.getElementById(previewId);
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    if (preview) {
+                        preview.src = evt.target.result;
+                        preview.style.display = 'block';
+                    }
+                    if (formId.includes('question_image') && !formId.includes('answer_image')) {
+                        imageMap[formId] = evt.target.result;
+                    }
+                    updatePreview();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                if (preview) preview.style.display = 'none';
+                delete imageMap[formId];
+                updatePreview();
+            }
+        }
+
+        // Attach listeners
+        document.querySelectorAll('input, textarea, select').forEach(input => {
+            if (input.type === 'file') {
+                input.addEventListener('change', handleFileSelect);
+            } else {
+                input.addEventListener('input', updatePreview);
+                input.addEventListener('change', updatePreview);
+            }
+        });
+
+        // Initial render
+        updatePreview();
+    });
+</script>
+{% endblock %}

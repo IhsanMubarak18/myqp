@@ -1,0 +1,509 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Create Question Paper – Heading & Blueprint
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Progress Indicator - Enhanced -->
+    <div class="progress-indicator glass-card mb-4">
+        <div class="progress-label text-gradient fw-bold mb-2">Step 1 of 3: Paper Heading & Blueprint</div>
+        <div class="progress bg-light" style="height: 10px;">
+            <div class="progress-fill" style="width: 33%"></div>
+        </div>
+        <div class="d-flex justify-content-between mt-3">
+            <span class="fw-semibold text-primary">📋 Heading & Blueprint</span>
+            <span class="text-muted">➡️ Part A Questions</span>
+            <span class="text-muted">➡️ Part B Questions</span>
+        </div>
+    </div>
+
+
+    <!-- Form Card - Enhanced -->
+    <div class="glass-card mb-4">
+        <!-- Header -->
+        <div class="card-header text-center">
+            <div class="d-flex justify-content-center mb-3">
+                <div class="bg-primary-gradient rounded-circle p-3 shadow-sm">
+                    <i class="fas fa-file-alt text-white fs-3"></i>
+                </div>
+            </div>
+            <h2 class="mb-2 text-white">Question Paper Heading & Blueprint</h2>
+            <p class="mb-0 opacity-75">Fill in the basic details and blueprint for your question paper</p>
+        </div>
+
+        <!-- Form Body -->
+        <div class="card-body">
+            <form method="post" novalidate id="questionPaperForm">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger border-0 rounded-lg mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle fs-4 me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Please correct the following errors:</h6>
+                            <ul class="mb-0 ps-3 mt-2">
+                                {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- BASIC DETAILS SECTION -->
+                <div class="mb-5">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                            <i class="fas fa-info-circle text-primary"></i>
+                        </div>
+                        <h4 class="mb-0 text-primary">Question Paper Details</h4>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Paper Code</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">QP</span>
+                                {{ form.question_paper_code }}
+                            </div>
+                            {% if form.question_paper_code.errors %}
+                            <div class="text-danger small mt-1">{{ form.question_paper_code.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Revision</label>
+                            {{ form.revesion }}
+                            {% if form.revesion.errors %}
+                            <div class="text-danger small mt-1">{{ form.revesion.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Subject Code</label>
+                            {{ form.subject_code }}
+                            {% if form.subject_code.errors %}
+                            <div class="text-danger small mt-1">{{ form.subject_code.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Exam Name</label>
+                            {{ form.exam_name }}
+                            {% if form.exam_name.errors %}
+                            <div class="text-danger small mt-1">{{ form.exam_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6" id="custom_exam_name_container" style="display: none;">
+                            <label class="form-label fw-semibold">Custom Exam Name</label>
+                            {{ form.custom_exam_name }}
+                            {% if form.custom_exam_name.errors %}
+                            <div class="text-danger small mt-1">{{ form.custom_exam_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Subject Name</label>
+                            {{ form.subject_name }}
+                            {% if form.subject_name.errors %}
+                            <div class="text-danger small mt-1">{{ form.subject_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Exam Duration (Hours)</label>
+                            {{ form.time }}
+                            {% if form.time.errors %}
+                            <div class="text-danger small mt-1">{{ form.time.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Maximum Marks</label>
+                            {{ form.exam_marks }}
+                            {% if form.exam_marks.errors %}
+                            <div class="text-danger small mt-1">{{ form.exam_marks.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODULE HOURS SECTION -->
+                <div class="mb-5">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                            <i class="fas fa-cubes text-primary"></i>
+                        </div>
+                        <h4 class="mb-0 text-primary">Blueprint – Module Hours Distribution</h4>
+                    </div>
+
+                    <p class="text-muted mb-3">
+                        Enter the teaching hours allocated for each module. These values will determine the weightage of
+                        questions from each module.
+                    </p>
+
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Module I</label>
+                            {{ form.module1_hours }}
+                            {% if form.module1_hours.errors %}
+                            <div class="text-danger small mt-1">{{ form.module1_hours.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Module II</label>
+                            {{ form.module2_hours }}
+                            {% if form.module2_hours.errors %}
+                            <div class="text-danger small mt-1">{{ form.module2_hours.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Module III</label>
+                            {{ form.module3_hours }}
+                            {% if form.module3_hours.errors %}
+                            <div class="text-danger small mt-1">{{ form.module3_hours.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Module IV</label>
+                            {{ form.module4_hours }}
+                            {% if form.module4_hours.errors %}
+                            <div class="text-danger small mt-1">{{ form.module4_hours.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COGNITIVE LEVEL SECTION -->
+                <div class="mb-5">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                            <i class="fas fa-brain text-primary"></i>
+                        </div>
+                        <h4 class="mb-0 text-primary">Blueprint – Cognitive Level Distribution</h4>
+                    </div>
+
+                    <p class="text-muted mb-3">
+                        Enter the percentage of marks for each cognitive level. The total should be 100%.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="cognitive-badge badge-R">Remember (R)</span>
+                        <span class="cognitive-badge badge-U">Understand (U)</span>
+                        <span class="cognitive-badge badge-A">Apply (A)</span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Remembering (R) %</label>
+                            <div class="input-group">
+                                {{ form.percent_R }}
+                                <span class="input-group-text bg-light">%</span>
+                            </div>
+                            {% if form.percent_R.errors %}
+                            <div class="text-danger small mt-1">{{ form.percent_R.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Understanding (U) %</label>
+                            <div class="input-group">
+                                {{ form.percent_U }}
+                                <span class="input-group-text bg-light">%</span>
+                            </div>
+                            {% if form.percent_U.errors %}
+                            <div class="text-danger small mt-1">{{ form.percent_U.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Application (A) %</label>
+                            <div class="input-group">
+                                {{ form.percent_A }}
+                                <span class="input-group-text bg-light">%</span>
+                            </div>
+                            {% if form.percent_A.errors %}
+                            <div class="text-danger small mt-1">{{ form.percent_A.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Total Percentage -->
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-lg mt-2">
+                                <span class="fw-semibold">Total Percentage:</span>
+                                <span id="totalPercentage" class="fw-bold fs-5 text-primary">0%</span>
+                            </div>
+                            <small class="text-muted d-block mt-2">The total percentage should be 100% for proper
+                                distribution.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <div class="mt-4 pt-3 border-top">
+                    <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold">
+                        <i class="fas fa-save me-2"></i>
+                        Save & Continue to Part A Questions
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                    <p class="text-center text-muted mt-3">
+                        <i class="fas fa-lightbulb me-1"></i>
+                        You'll be able to add questions in the next step
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Form Guidelines - Enhanced -->
+    <div class="glass-card">
+        <div class="card-body">
+            <h5 class="d-flex align-items-center mb-3">
+                <i class="fas fa-info-circle text-primary me-2"></i>
+                Form Guidelines
+            </h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Ensure all required fields are filled before proceeding
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Cognitive level percentages should total 100%
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Module hours should reflect actual teaching hours
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            You can edit these details later if needed
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page JS -->
+<script>
+    // ========== CUSTOM EXAM NAME TOGGLE ==========
+    function toggleCustomExamName() {
+        const examNameDropdown = document.getElementById('exam_name_dropdown');
+        const customContainer = document.getElementById('custom_exam_name_container');
+        const customField = document.getElementById('custom_exam_name_field');
+
+        if (examNameDropdown && customContainer && customField) {
+            if (examNameDropdown.value === 'OTHER') {
+                customContainer.style.display = 'block';
+                customField.required = true;
+            } else {
+                customContainer.style.display = 'none';
+                customField.required = false;
+                customField.value = '';
+            }
+        }
+    }
+
+    // ========== SUBJECT CODE AUTO-FILL ==========
+    function handleSubjectCodeChange() {
+        const subjectCodeDropdown = document.getElementById('subject_code_dropdown');
+        const subjectNameField = document.getElementById('subject_name_field');
+        const timeField = document.getElementById('time_field');
+
+        if (!subjectCodeDropdown || !subjectNameField || !timeField) return;
+
+        const selectedCode = subjectCodeDropdown.value;
+
+        if (!selectedCode) {
+            subjectNameField.value = '';
+            timeField.value = '';
+            return;
+        }
+
+        // Fetch subject details from API
+        fetch(`{% url 'question_paper:get_subject_details' %}?code=${encodeURIComponent(selectedCode)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    subjectNameField.value = data.subject_name;
+                    timeField.value = data.duration_hours;
+                } else {
+                    console.error('Subject not found');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching subject details:', error);
+            });
+    }
+
+    // ========== PERCENTAGE CALCULATION ==========
+    function calculateTotalPercentage() {
+        const r = parseFloat(document.getElementById('{{ form.percent_R.id_for_label }}')?.value) || 0;
+        const u = parseFloat(document.getElementById('{{ form.percent_U.id_for_label }}')?.value) || 0;
+        const a = parseFloat(document.getElementById('{{ form.percent_A.id_for_label }}')?.value) || 0;
+        const total = r + u + a;
+        const display = document.getElementById('totalPercentage');
+        display.textContent = total.toFixed(1) + '%';
+
+        // Change color based on total
+        if (total === 100) {
+            display.className = 'fw-bold fs-5 text-success';
+        } else if (total > 100) {
+            display.className = 'fw-bold fs-5 text-danger';
+        } else {
+            display.className = 'fw-bold fs-5 text-warning';
+        }
+    }
+
+    // ========== PAGE INITIALIZATION ==========
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize percentage calculation
+        calculateTotalPercentage();
+
+        // Attach event listeners to percentage fields
+        ['{{ form.percent_R.id_for_label }}', '{{ form.percent_U.id_for_label }}', '{{ form.percent_A.id_for_label }}'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', calculateTotalPercentage);
+                el.addEventListener('change', calculateTotalPercentage);
+            }
+        });
+
+        // Initialize custom exam name visibility on page load
+        toggleCustomExamName();
+
+        // Form validation on submit
+        document.getElementById('questionPaperForm').addEventListener('submit', e => {
+            const r = parseFloat(document.getElementById('{{ form.percent_R.id_for_label }}')?.value) || 0;
+            const u = parseFloat(document.getElementById('{{ form.percent_U.id_for_label }}')?.value) || 0;
+            const a = parseFloat(document.getElementById('{{ form.percent_A.id_for_label }}')?.value) || 0;
+            const total = r + u + a;
+
+            if (Math.abs(total - 100) > 0.1) {
+                e.preventDefault();
+                alert('Total percentage must be exactly 100%. Current total: ' + total.toFixed(1) + '%');
+                return false;
+            }
+        });
+
+        // Add focus effects to form inputs
+        const formInputs = document.querySelectorAll('.form-control, .form-select');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function () {
+                this.parentElement.classList.add('focus');
+            });
+            input.addEventListener('blur', function () {
+                this.parentElement.classList.remove('focus');
+            });
+        });
+    });
+</script>
+
+<!-- Add some custom styles for better appearance -->
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #4c51bf, #667eea);
+        color: white;
+        border-radius: 16px 16px 0 0 !important;
+        padding: 2rem !important;
+    }
+
+    .progress-fill {
+        background: linear-gradient(135deg, #4c51bf, #667eea);
+        border-radius: 5px;
+        transition: width 0.6s ease;
+    }
+
+    .cognitive-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-block;
+    }
+
+    .badge-R {
+        background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+        color: #3730a3;
+        border: 1px solid #c7d2fe;
+    }
+
+    .badge-U {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .badge-A {
+        background: linear-gradient(135deg, #ffedd5, #fed7aa);
+        color: #9a3412;
+        border: 1px solid #fed7aa;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #4c51bf, #667eea);
+        border: none;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .input-group-text {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        font-weight: 600;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #4c51bf, #667eea);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+</style>
+
+{% endblock %}

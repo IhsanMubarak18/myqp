@@ -1,0 +1,58 @@
+{% extends "base_management.html" %}
+
+{% block title %}{{ action }} Revision{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ action }} Revision</h1>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Year Field -->
+            <div>
+                <label for="{{ form.year.id_for_label }}"
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {{ form.year.label }}
+                </label>
+                {{ form.year }}
+                {% if form.year.errors %}
+                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.year.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Active Checkbox -->
+            <div class="flex items-center">
+                {{ form.is_active }}
+                <label for="{{ form.is_active.id_for_label }}"
+                    class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {{ form.is_active.label }}
+                </label>
+                {% if form.is_active.errors %}
+                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.is_active.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Form Errors -->
+            {% if form.non_field_errors %}
+            <div class="p-4 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-lg">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <!-- Buttons -->
+            <div class="flex justify-end space-x-4 pt-4">
+                <a href="{% url 'question_paper:revision_list' %}"
+                    class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-6 py-2 bg-primary hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors shadow-md">
+                    Save Revision
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

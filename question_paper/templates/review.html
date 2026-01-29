@@ -1,0 +1,1436 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Review Question Paper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS for Question Display -->
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4c51bf, #667eea);
+            --success-gradient: linear-gradient(135deg, #4c51bf, #667eea);
+            --danger-gradient: linear-gradient(135deg, #4c51bf, #667eea);
+            --warning-gradient: linear-gradient(135deg, #f59e0b, #fbbf24);
+
+            --primary-color: #4c51bf;
+            --success-color: #4c51bf;
+            --danger-color: #4c51bf;
+            --warning-color: #f59e0b;
+
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            color: #334155;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .review-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .page-header {
+            margin-bottom: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* EDIT HEADING BUTTON */
+        .btn-edit-heading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.75rem 1.5rem;
+            background: var(--warning-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-edit-heading:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(245, 158, 11, 0.4);
+            color: white;
+        }
+
+        /* PAPER INFO CARD */
+        .paper-info-card {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .paper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .paper-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .paper-code {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .paper-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Question Display Styles */
+        .question-image-container {
+            margin: 20px 0;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+
+        .question-img {
+            max-width: 100%;
+            height: auto;
+            display: inline-block;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            background: white;
+        }
+
+        .img-small {
+            max-width: 200px !important;
+            width: 200px;
+        }
+
+        .img-medium {
+            max-width: 400px !important;
+            width: 400px;
+        }
+
+        .img-large {
+            max-width: 600px !important;
+            width: 600px;
+        }
+
+        .img-xlarge {
+            max-width: 800px !important;
+            width: 800px;
+        }
+
+        .question-text-above {
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+            white-space: pre-wrap;
+        }
+
+        .question-text-below {
+            margin-top: 15px;
+            page-break-inside: avoid;
+            white-space: pre-wrap;
+        }
+
+        .sub-question {
+            margin-left: 30px;
+            padding-left: 15px;
+            border-left: 2px solid #ccc;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        .sub-question-label {
+            font-weight: bold;
+            margin-right: 8px;
+            color: #666;
+        }
+
+        .sub-questions-container {
+            margin-top: 10px;
+        }
+
+        /* PART CARDS */
+        .part-card {
+            background: white;
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .part-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .part-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .part-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .part-a-tag {
+            background: var(--primary-gradient);
+        }
+
+        .part-b-tag {
+            background: var(--success-gradient);
+        }
+
+        .part-c-tag {
+            background: var(--danger-gradient);
+        }
+
+        .btn-edit {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: #475569;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #1e293b;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+
+        .stat-item {
+            background: #f8fafc;
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .part-a-stats {
+            border-left-color: var(--primary-color);
+        }
+
+        .part-b-stats {
+            border-left-color: var(--success-color);
+        }
+
+        .part-c-stats {
+            border-left-color: var(--danger-color);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1;
+        }
+
+        .info-scroll {
+            max-height: 60px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+
+        .questions-container {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .question-item {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .question-number {
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.1em;
+            color: var(--primary-color);
+        }
+
+        .question-mark {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9em;
+            background: #f1f5f9;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        .question-meta {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .question-meta span {
+            margin-right: 15px;
+        }
+
+        .question-content {
+            margin-top: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: #94a3b8;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.5rem 1.25rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .empty-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 81, 191, 0.3);
+            color: white;
+        }
+
+        .action-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #94a3b8;
+        }
+
+        .status-dot.completed {
+            background: var(--success-color);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+
+        .status-label {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.75rem 2rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(76, 81, 191, 0.3);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(76, 81, 191, 0.4);
+            color: white;
+        }
+
+        .btn-download.disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+            pointer-events: none;
+        }
+
+        .completion-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--success-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .completion-status {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .question-image-preview {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .question-image-preview img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            background: white;
+        }
+
+        .or-group {
+            background: #f8fafc;
+            border: 2px solid var(--danger-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .or-label {
+            display: inline-block;
+            background: var(--danger-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .review-container {
+                padding: 20px 15px;
+            }
+
+            .main-card {
+                padding: 1.5rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                justify-content: center;
+            }
+
+            .paper-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .paper-details {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .part-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .action-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .question-item {
+                padding: 1rem;
+            }
+
+            .question-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="review-container">
+        <div class="main-card animate-fade-in">
+            <!-- Page Header with Edit Heading Button -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Question Paper Review</h1>
+                    <p class="page-subtitle">Review and verify all sections before downloading</p>
+                </div>
+                <div class="header-actions">
+                    {% if qp %}
+                    <a href="{% url 'question_paper:edit_heading' qp.id %}" class="btn-edit-heading">
+                        <i class="fas fa-edit"></i> Edit Heading & Blueprint
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Paper Information Card -->
+            {% if qp %}
+            <div class="paper-info-card">
+                <div class="paper-header">
+                    <h3 class="paper-title">{{ qp.subject_name }}</h3>
+                    <span class="paper-code">Code: {{ qp.question_paper_code }}</span>
+                </div>
+                <p class="text-muted mb-3">{{ qp.exam_name }}</p>
+                <div class="paper-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">{{ qp.time }} hours</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Revision</span>
+                        <span class="detail-value">{{ qp.revesion }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Subject Code</span>
+                        <span class="detail-value">{{ qp.subject_code }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Total Marks</span>
+                        <span class="detail-value">{{ qp.maximum_mark|default:"0" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">
+                            {% if part_a and part_b and part_c %}
+                            <span class="text-success">Complete</span>
+                            {% else %}
+                            <span class="text-warning">In Progress</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- PART A -->
+            <div class="part-card">
+                <div class="part-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="part-tag part-a-tag">
+                            <i class="fas fa-check-circle"></i> PART A
+                        </span>
+                        {% if part_a %}
+                        <span class="completion-check">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% if part_a %}
+                    <a href="{% url 'question_paper:edit_part_a' qp.id %}" class="btn-edit">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    {% endif %}
+                </div>
+
+                {% if part_a %}
+                <div class="stats-grid">
+                    <div class="stat-item part-a-stats">
+                        <div class="stat-label">Instructions</div>
+                        <div class="info-scroll">{{ part_a.info|default:"No instructions provided" }}</div>
+                    </div>
+                    <div class="stat-item part-a-stats">
+                        <div class="stat-label">Questions</div>
+                        <div class="stat-value">{{ part_a.questions.count }}</div>
+                    </div>
+                    <div class="stat-item part-a-stats">
+                        <div class="stat-label">Total Marks</div>
+                        <div class="stat-value">{{ part_a.total }}</div>
+                    </div>
+                </div>
+
+                {% if part_a.questions.exists %}
+                <div class="questions-container">
+                    <h6 class="mb-3 fw-semibold">Questions ({{ part_a.questions.count }})</h6>
+
+                    {% for question in part_a.questions.all %}
+                    {% if not question.is_sub_question %}
+                    <div class="question-item">
+                        <div class="question-header">
+                            <div>
+                                <span class="question-number">{{ forloop.counter }}.</span>
+                                <span class="question-mark">[{{ part_a.each_question_mark }} Mark{{
+                                    part_a.each_question_mark|pluralize }}]</span>
+                            </div>
+                            <div class="question-meta">
+                                <span>Module {{ question.module }}</span>
+                                <span>Level: {{ question.get_level_display }}</span>
+                                {% if question.question_image %}
+                                <span><i class="fas fa-image"></i> Has Image</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="question-content">
+                            <!-- Display question with image positioning - USING NEW TEXT_BELOW_IMAGE FIELD -->
+                            {% if question.question_image %}
+                            {% if question.question_image_position == 'split' %}
+                            <!-- Split: First line above, image centered, rest below -->
+                            {% with lines=question.question.splitlines %}
+                            {% if lines.0 %}
+                            <div class="question-text-above">{{ lines.0 }}</div>
+                            {% endif %}
+
+                            <div class="question-image-preview">
+                                <img src="{{ question.question_image.url }}" alt="Question Image"
+                                    class="img-{{ question.question_image_size|default:'medium' }}">
+                            </div>
+
+                            {% if lines|length > 1 %}
+                            <div class="question-text-below">
+                                {% for line in lines|slice:"1:" %}
+                                {{ line }}<br>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% endwith %}
+
+                            {% elif question.question_image_position == 'top' %}
+                            <!-- Top: Image above text -->
+                            <div class="question-image-preview">
+                                <img src="{{ question.question_image.url }}" alt="Question Image"
+                                    class="img-{{ question.question_image_size|default:'medium' }}">
+                            </div>
+                            <div class="question-text-below">{{ question.question }}</div>
+
+                            {% elif question.question_image_position == 'middle' %}
+                            <!-- Middle: Using text_below_image field -->
+                            <div class="question-text-above">{{ question.question }}</div>
+
+                            <div class="question-image-preview">
+                                <img src="{{ question.question_image.url }}" alt="Question Image"
+                                    class="img-{{ question.question_image_size|default:'medium' }}">
+                            </div>
+
+                            {% if question.text_below_image %}
+                            <div class="question-text-below">{{ question.text_below_image }}</div>
+                            {% endif %}
+
+                            {% else %}
+                            <!-- Bottom (default): Text above image -->
+                            <div class="question-text-above">{{ question.question }}</div>
+                            <div class="question-image-preview">
+                                <img src="{{ question.question_image.url }}" alt="Question Image"
+                                    class="img-{{ question.question_image_size|default:'medium' }}">
+                            </div>
+                            {% endif %}
+
+                            {% else %}
+                            <!-- No image -->
+                            <div class="question-text-above">{{ question.question }}</div>
+                            {% endif %}
+
+                            <!-- Display sub-questions if any -->
+                            {% if question.sub_questions.exists %}
+                            <div class="sub-questions-container mt-3">
+                                {% for sub in question.sub_questions.all %}
+                                <div class="sub-question">
+                                    <div class="sub-question-header">
+                                        <span class="sub-question-label">({{ sub.sub_question_letter }})</span>
+                                    </div>
+                                    <div class="question-content">
+                                        {% if sub.question_image %}
+                                        {% if sub.question_image_position == 'split' %}
+                                        {% with lines=sub.question.splitlines %}
+                                        {% if lines.0 %}
+                                        <div class="question-text-above">{{ lines.0 }}</div>
+                                        {% endif %}
+
+                                        <div class="question-image-preview">
+                                            <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                class="img-{{ sub.question_image_size|default:'medium' }}">
+                                        </div>
+
+                                        {% if lines|length > 1 %}
+                                        <div class="question-text-below">
+                                            {% for line in lines|slice:"1:" %}
+                                            {{ line }}<br>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        {% endwith %}
+                                        {% elif sub.question_image_position == 'top' %}
+                                        <div class="question-image-preview">
+                                            <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                class="img-{{ sub.question_image_size|default:'medium' }}">
+                                        </div>
+                                        <div class="question-text-below">{{ sub.question }}</div>
+                                        {% elif sub.question_image_position == 'middle' %}
+                                        <div class="question-text-above">{{ sub.question }}</div>
+
+                                        <div class="question-image-preview">
+                                            <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                class="img-{{ sub.question_image_size|default:'medium' }}">
+                                        </div>
+
+                                        {% if sub.text_below_image %}
+                                        <div class="question-text-below">{{ sub.text_below_image }}</div>
+                                        {% endif %}
+                                        {% else %}
+                                        <div class="question-text-above">{{ sub.question }}</div>
+                                        <div class="question-image-preview">
+                                            <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                class="img-{{ sub.question_image_size|default:'medium' }}">
+                                        </div>
+                                        {% endif %}
+                                        {% else %}
+                                        <div class="question-text-above">{{ sub.question }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <!-- Display answer for Part A -->
+                            {% if question.answer %}
+                            <div class="answer mt-2">
+                                <strong>Answer:</strong> {{ question.answer }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-file-alt empty-icon"></i>
+                    <p class="fw-semibold">Part A Not Created</p>
+                    <p class="mb-3">Multiple Choice Questions section is not configured yet.</p>
+                    <a href="{% url 'question_paper:PartA' %}" class="empty-btn">
+                        <i class="fas fa-plus"></i> Create Part A
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- PART B -->
+            <div class="part-card">
+                <div class="part-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="part-tag part-b-tag">
+                            <i class="fas fa-edit"></i> PART B
+                        </span>
+                        {% if part_b %}
+                        <span class="completion-check">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% if part_b %}
+                    <a href="{% url 'question_paper:edit_part_b' qp.id %}" class="btn-edit">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    {% endif %}
+                </div>
+
+                {% if part_b %}
+                <div class="stats-grid">
+                    <div class="stat-item part-b-stats">
+                        <div class="stat-label">Instructions</div>
+                        <div class="info-scroll">{{ part_b.info|default:"No instructions provided" }}</div>
+                    </div>
+                    <div class="stat-item part-b-stats">
+                        <div class="stat-label">Required Questions</div>
+                        <div class="stat-value">{{ part_b.required_questions }}</div>
+                    </div>
+                    <div class="stat-item part-b-stats">
+                        <div class="stat-label">Total Marks</div>
+                        <div class="stat-value">{{ part_b.total }}</div>
+                    </div>
+                </div>
+
+                {% if part_b.questions.exists %}
+                <div class="questions-container">
+                    <h6 class="mb-3 fw-semibold">Questions ({{ part_b.questions.count }})</h6>
+
+                    {% for question in part_b.questions.all %}
+                    {% if not question.is_sub_question %}
+                    <div class="question-item">
+                        <div class="question-header">
+                            <div>
+                                <span class="question-number">{{ forloop.counter }}.</span>
+                                <span class="question-mark">[{{ part_b.each_questions_mark }} Mark{{
+                                    part_b.each_questions_mark|pluralize }}]</span>
+                            </div>
+                            <div class="question-meta">
+                                <span>Module {{ question.module }}</span>
+                                <span>Level: {{ question.get_level_display }}</span>
+                                {% if question.question_image %}
+                                <span><i class="fas fa-image"></i> Has Image</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="question-content">
+                            <!-- Display question with image positioning - USING NEW TEXT_BELOW_IMAGE FIELD -->
+                            {% if question.question_image %}
+                            {% if question.question_image_position == 'split' %}
+                            <!-- Split: First line above, image centered, rest below -->
+                            {% with lines=question.question.splitlines %}
+                            {% if lines.0 %}
+                            <div class="question-text-above">{{ lines.0 }}</div>
+                            {% endif %}
+
+                            <div class="question-image-preview">
+                                <img src="{{ question.question_image.url }}" alt="Question Image"
+                                    class="img-{{ question.question_image_size|default:'medium' }}">
+                            </div>
+
+                            {% if lines|length > 1 %}
+                            <div class="question-text-below">
+                                {% for line in lines|slice:"1:" %}
+                                {{ line }}<br>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% endwith %}
+
+                            {% elif question.question_image_position == 'top' %}
+                            <!-- Top: Image above text -->
+                            <div class="question-image-preview">
+                                <img src="{{ question.question_image.url }}" alt="Question Image"
+                                    class="img-{{ question.question_image_size|default:'medium' }}">
+                            </div>
+                            <div class="question-text-below">{{ question.question }}</div>
+
+                            {% elif question.question_image_position == 'middle' %}
+                            <!-- Middle: Using text_below_image field -->
+                            <div class="question-text-above">{{ question.question }}</div>
+
+                            <div class="question-image-preview">
+                                <img src="{{ question.question_image.url }}" alt="Question Image"
+                                    class="img-{{ question.question_image_size|default:'medium' }}">
+                            </div>
+
+                            {% if question.text_below_image %}
+                            <div class="question-text-below">{{ question.text_below_image }}</div>
+                            {% endif %}
+
+                            {% else %}
+                            <!-- Bottom (default): Text above image -->
+                            <div class="question-text-above">{{ question.question }}</div>
+                            <div class="question-image-preview">
+                                <img src="{{ question.question_image.url }}" alt="Question Image"
+                                    class="img-{{ question.question_image_size|default:'medium' }}">
+                            </div>
+                            {% endif %}
+
+                            {% else %}
+                            <!-- No image -->
+                            <div class="question-text-above">{{ question.question }}</div>
+                            {% endif %}
+
+                            <!-- Display sub-questions if any -->
+                            {% if question.sub_questions.exists %}
+                            <div class="sub-questions-container mt-3">
+                                {% for sub in question.sub_questions.all %}
+                                <div class="sub-question">
+                                    <div class="sub-question-header">
+                                        <span class="sub-question-label">({{ sub.sub_question_letter }})</span>
+                                    </div>
+                                    <div class="question-content">
+                                        {% if sub.question_image %}
+                                        {% if sub.question_image_position == 'split' %}
+                                        {% with lines=sub.question.splitlines %}
+                                        {% if lines.0 %}
+                                        <div class="question-text-above">{{ lines.0 }}</div>
+                                        {% endif %}
+
+                                        <div class="question-image-preview">
+                                            <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                class="img-{{ sub.question_image_size|default:'medium' }}">
+                                        </div>
+
+                                        {% if lines|length > 1 %}
+                                        <div class="question-text-below">
+                                            {% for line in lines|slice:"1:" %}
+                                            {{ line }}<br>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        {% endwith %}
+                                        {% elif sub.question_image_position == 'top' %}
+                                        <div class="question-image-preview">
+                                            <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                class="img-{{ sub.question_image_size|default:'medium' }}">
+                                        </div>
+                                        <div class="question-text-below">{{ sub.question }}</div>
+                                        {% elif sub.question_image_position == 'middle' %}
+                                        <div class="question-text-above">{{ sub.question }}</div>
+
+                                        <div class="question-image-preview">
+                                            <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                class="img-{{ sub.question_image_size|default:'medium' }}">
+                                        </div>
+
+                                        {% if sub.text_below_image %}
+                                        <div class="question-text-below">{{ sub.text_below_image }}</div>
+                                        {% endif %}
+                                        {% else %}
+                                        <div class="question-text-above">{{ sub.question }}</div>
+                                        <div class="question-image-preview">
+                                            <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                class="img-{{ sub.question_image_size|default:'medium' }}">
+                                        </div>
+                                        {% endif %}
+                                        {% else %}
+                                        <div class="question-text-above">{{ sub.question }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-file-alt empty-icon"></i>
+                    <p class="fw-semibold">Part B Not Created</p>
+                    <p class="mb-3">Descriptive Questions section is not configured yet.</p>
+                    <a href="{% url 'question_paper:PartB' %}" class="empty-btn">
+                        <i class="fas fa-plus"></i> Create Part B
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- PART C -->
+            <div class="part-card">
+                <div class="part-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="part-tag part-c-tag">
+                            <i class="fas fa-random"></i> PART C
+                        </span>
+                        {% if part_c %}
+                        <span class="completion-check">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% if part_c %}
+                    <a href="{% url 'question_paper:edit_part_c' qp.id %}" class="btn-edit">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    {% endif %}
+                </div>
+
+                {% if part_c %}
+                <div class="stats-grid">
+                    <div class="stat-item part-c-stats">
+                        <div class="stat-label">Instructions</div>
+                        <div class="info-scroll">{{ part_c.info|default:"No instructions provided" }}</div>
+                    </div>
+                    <div class="stat-item part-c-stats">
+                        <div class="stat-label">Required Questions</div>
+                        <div class="stat-value">{{ part_c.required_questions }}</div>
+                    </div>
+                    <div class="stat-item part-c-stats">
+                        <div class="stat-label">Total Marks</div>
+                        <div class="stat-value">{{ part_c.total }}</div>
+                    </div>
+                </div>
+
+                {% if part_c.questions.exists %}
+                <div class="questions-container">
+                    <h6 class="mb-3 fw-semibold">Questions (OR Pattern)</h6>
+
+                    {% regroup part_c.questions.all by or_group_number as or_groups %}
+
+                    {% for group in or_groups %}
+                    {% if group.grouper %}
+                    <div class="or-group">
+                        <div class="or-label">OR Group {{ group.grouper }}</div>
+
+                        {% for question in group.list %}
+                        <div class="question-item">
+                            <div class="question-header">
+                                <div>
+                                    <span class="question-number">{{ forloop.parentloop.counter }}.{{
+                                        forloop.counter|add:"96"|stringformat:"c" }}.</span>
+                                    <span class="question-mark">[{{ part_c.each_questions_mark }} Mark{{
+                                        part_c.each_questions_mark|pluralize }}]</span>
+                                </div>
+                                <div class="question-meta">
+                                    <span>Module {{ question.module }}</span>
+                                    <span>Level: {{ question.get_level_display }}</span>
+                                    {% if question.question_image %}
+                                    <span><i class="fas fa-image"></i> Has Image</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="question-content">
+                                <!-- Display question with image positioning - USING NEW TEXT_BELOW_IMAGE FIELD -->
+                                {% if question.question_image %}
+                                {% if question.question_image_position == 'split' %}
+                                <!-- Split: First line above, image centered, rest below -->
+                                {% with lines=question.question.splitlines %}
+                                {% if lines.0 %}
+                                <div class="question-text-above">{{ lines.0 }}</div>
+                                {% endif %}
+
+                                <div class="question-image-preview">
+                                    <img src="{{ question.question_image.url }}" alt="Question Image"
+                                        class="img-{{ question.question_image_size|default:'medium' }}">
+                                </div>
+
+                                {% if lines|length > 1 %}
+                                <div class="question-text-below">
+                                    {% for line in lines|slice:"1:" %}
+                                    {{ line }}<br>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+
+                                {% elif question.question_image_position == 'top' %}
+                                <!-- Top: Image above text -->
+                                <div class="question-image-preview">
+                                    <img src="{{ question.question_image.url }}" alt="Question Image"
+                                        class="img-{{ question.question_image_size|default:'medium' }}">
+                                </div>
+                                <div class="question-text-below">{{ question.question }}</div>
+
+                                {% elif question.question_image_position == 'middle' %}
+                                <!-- Middle: Using text_below_image field -->
+                                <div class="question-text-above">{{ question.question }}</div>
+
+                                <div class="question-image-preview">
+                                    <img src="{{ question.question_image.url }}" alt="Question Image"
+                                        class="img-{{ question.question_image_size|default:'medium' }}">
+                                </div>
+
+                                {% if question.text_below_image %}
+                                <div class="question-text-below">{{ question.text_below_image }}</div>
+                                {% endif %}
+
+                                {% else %}
+                                <!-- Bottom (default): Text above image -->
+                                <div class="question-text-above">{{ question.question }}</div>
+                                <div class="question-image-preview">
+                                    <img src="{{ question.question_image.url }}" alt="Question Image"
+                                        class="img-{{ question.question_image_size|default:'medium' }}">
+                                </div>
+                                {% endif %}
+
+                                {% else %}
+                                <!-- No image -->
+                                <div class="question-text-above">{{ question.question }}</div>
+                                {% endif %}
+
+                                <!-- Display sub-questions if any -->
+                                {% if question.sub_questions.exists %}
+                                <div class="sub-questions-container mt-3">
+                                    {% for sub in question.sub_questions.all %}
+                                    <div class="sub-question">
+                                        <div class="sub-question-header">
+                                            <span class="sub-question-label">({{ sub.sub_question_letter }})</span>
+                                        </div>
+                                        <div class="question-content">
+                                            {% if sub.question_image %}
+                                            {% if sub.question_image_position == 'split' %}
+                                            {% with lines=sub.question.splitlines %}
+                                            {% if lines.0 %}
+                                            <div class="question-text-above">{{ lines.0 }}</div>
+                                            {% endif %}
+
+                                            <div class="question-image-preview">
+                                                <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                    class="img-{{ sub.question_image_size|default:'medium' }}">
+                                            </div>
+
+                                            {% if lines|length > 1 %}
+                                            <div class="question-text-below">
+                                                {% for line in lines|slice:"1:" %}
+                                                {{ line }}<br>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% elif sub.question_image_position == 'top' %}
+                                            <div class="question-image-preview">
+                                                <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                    class="img-{{ sub.question_image_size|default:'medium' }}">
+                                            </div>
+                                            <div class="question-text-below">{{ sub.question }}</div>
+                                            {% elif sub.question_image_position == 'middle' %}
+                                            <div class="question-text-above">{{ sub.question }}</div>
+
+                                            <div class="question-image-preview">
+                                                <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                    class="img-{{ sub.question_image_size|default:'medium' }}">
+                                            </div>
+
+                                            {% if sub.text_below_image %}
+                                            <div class="question-text-below">{{ sub.text_below_image }}</div>
+                                            {% endif %}
+                                            {% else %}
+                                            <div class="question-text-above">{{ sub.question }}</div>
+                                            <div class="question-image-preview">
+                                                <img src="{{ sub.question_image.url }}" alt="Question Image"
+                                                    class="img-{{ sub.question_image_size|default:'medium' }}">
+                                            </div>
+                                            {% endif %}
+                                            {% else %}
+                                            <div class="question-text-above">{{ sub.question }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if forloop.counter == 1 and group.list|length > 1 %}
+                        <div class="text-center my-3">
+                            <span class="badge bg-danger fs-6 px-3 py-2">OR</span>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-file-alt empty-icon"></i>
+                    <p class="fw-semibold">Part C Not Created</p>
+                    <p class="mb-3">OR Pattern Questions section is not configured yet.</p>
+                    <a href="{% url 'question_paper:PartC' %}" class="empty-btn">
+                        <i class="fas fa-plus"></i> Create Part C
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Action Footer -->
+            <div class="action-footer">
+                <div class="status-indicator">
+                    <div class="status-dot {% if part_a %}completed{% endif %}"></div>
+                    <div class="status-dot {% if part_b %}completed{% endif %}"></div>
+                    <div class="status-dot {% if part_c %}completed{% endif %}"></div>
+                    <div class="completion-status">
+                        {% if part_a and part_b and part_c %}
+                        All sections completed ✓
+                        {% else %}
+                        {{ completed_count }}/3 sections completed
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if part_a and part_b and part_c %}
+                <!-- FIXED: Changed to 'downloads' to match your urls.py -->
+                <a href="{% url 'question_paper:downloads' qp.id %}" class="btn-download">
+                    <i class="fas fa-download"></i> Proceed to Downloads
+                </a>
+                {% else %}
+                <button class="btn-download disabled" disabled>
+                    <i class="fas fa-lock"></i> Complete All Sections
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add animation to question rows
+            const questionRows = document.querySelectorAll('.question-item');
+            questionRows.forEach((row, index) => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(10px)';
+
+                setTimeout(() => {
+                    row.style.transition = 'all 0.4s ease';
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add hover effects to cards
+            const partCards = document.querySelectorAll('.part-card');
+            partCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-4px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Toggle sub-question visibility
+            document.querySelectorAll('.sub-questions-container').forEach(container => {
+                const subQuestions = container.querySelectorAll('.sub-question');
+                if (subQuestions.length > 0) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.className = 'btn btn-sm btn-outline-primary mt-2';
+                    toggleBtn.innerHTML = '<i class="fas fa-chevron-down"></i> Show Sub-questions';
+                    container.parentElement.insertBefore(toggleBtn, container);
+                    container.style.display = 'none';
+
+                    toggleBtn.addEventListener('click', function () {
+                        if (container.style.display === 'none') {
+                            container.style.display = 'block';
+                            this.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Sub-questions';
+                        } else {
+                            container.style.display = 'none';
+                            this.innerHTML = '<i class="fas fa-chevron-down"></i> Show Sub-questions';
+                        }
+                    });
+                }
+            });
+
+            // Fix image display in review
+            document.querySelectorAll('.question-image-preview img').forEach(img => {
+                img.addEventListener('error', function () {
+                    this.src = '/static/images/no-image.png';
+                    this.alt = 'Image not available';
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

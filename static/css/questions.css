@@ -1,0 +1,154 @@
+/* Question Display Styles */
+.question-image-container {
+    margin: 20px 0;
+    text-align: center;
+    page-break-inside: avoid;
+}
+
+.question-img {
+    max-width: 100%;
+    height: auto;
+    display: inline-block;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    background: white;
+}
+
+.img-small { 
+    max-width: 200px !important;
+    width: 200px;
+}
+
+.img-medium { 
+    max-width: 400px !important;
+    width: 400px;
+}
+
+.img-large { 
+    max-width: 600px !important;
+    width: 600px;
+}
+
+.img-xlarge { 
+    max-width: 800px !important;
+    width: 800px;
+}
+
+.question-text-above {
+    margin-bottom: 15px;
+    page-break-inside: avoid;
+}
+
+.question-text-below {
+    margin-top: 15px;
+    page-break-inside: avoid;
+}
+
+.sub-question {
+    margin-left: 30px;
+    padding-left: 15px;
+    border-left: 2px solid #ccc;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    page-break-inside: avoid;
+}
+
+.sub-question-label {
+    font-weight: bold;
+    margin-right: 8px;
+    color: #666;
+}
+
+.sub-questions-container {
+    margin-top: 10px;
+}
+
+.question-item {
+    margin-bottom: 25px;
+    page-break-inside: avoid;
+}
+
+.question-number {
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 1.1em;
+}
+
+.question-mark {
+    float: right;
+    font-style: italic;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* Form Styling for Question Creation */
+.sub-question-toggle-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border: 1px solid #dee2e6;
+}
+
+.image-position-info {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.form-question-group {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+}
+
+.image-preview-container {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.image-preview {
+    max-width: 300px;
+    max-height: 200px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    background: white;
+}
+
+/* For PDF export */
+@media print {
+    .question-img {
+        border: 1px solid #000;
+        max-width: 100% !important;
+        width: auto !important;
+    }
+    
+    .sub-question {
+        border-left: 1px solid #000;
+    }
+    
+    .page-break {
+        page-break-before: always;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .img-small, .img-medium, .img-large, .img-xlarge {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    
+    .sub-question {
+        margin-left: 15px;
+        padding-left: 10px;
+    }
+}

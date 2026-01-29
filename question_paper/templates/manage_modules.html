@@ -1,0 +1,72 @@
+{% extends "base_management.html" %}
+{% block title %}Manage Modules{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Manage Modules</h1>
+            <p class="mt-2 text-gray-600 dark:text-gray-400">Add, edit, or remove modules</p>
+        </div>
+        <a href="{% url 'question_paper:module_add' %}"
+            class="inline-flex items-center px-6 py-3 bg-primary hover:bg-purple-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+            <span class="material-symbols-outlined mr-2">add</span>
+            Add New Module
+        </a>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <table class="w-full">
+            <thead class="bg-gray-100 dark:bg-gray-700">
+                <tr>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Module Number
+                    </th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Status</th>
+                    <th class="px-6 py-4 text-right text-sm font-semibold text-gray-900 dark:text-white">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for module in modules %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+                    <td class="px-6 py-4 text-gray-900 dark:text-white font-medium">Module {{ module.module_number }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if module.is_active %}
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200">
+                            <span class="material-symbols-outlined text-sm mr-1">check_circle</span> Active
+                        </span>
+                        {% else %}
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
+                            <span class="material-symbols-outlined text-sm mr-1">cancel</span> Inactive
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <a href="{% url 'question_paper:module_edit' module.pk %}"
+                            class="inline-flex items-center px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-lg transition-colors">
+                            <span class="material-symbols-outlined text-sm mr-1">edit</span> Edit
+                        </a>
+                        <form method="post" action="{% url 'question_paper:module_delete' module.pk %}" class="inline"
+                            onsubmit="return confirm('Are you sure you want to delete this module?');">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="inline-flex items-center px-3 py-1.5 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-800 dark:text-red-200 rounded-lg transition-colors">
+                                <span class="material-symbols-outlined text-sm mr-1">delete</span> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                        <span
+                            class="material-symbols-outlined text-6xl mb-4 block text-gray-300 dark:text-gray-600">inbox</span>
+                        <p class="text-lg">No modules found</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

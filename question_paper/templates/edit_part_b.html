@@ -1,0 +1,847 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Part B - {{ question_paper.subject_name }}</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4c51bf, #667eea);
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+
+            --shadow-lg: 0 25px 60px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 15px 40px rgba(0, 0, 0, 0.1);
+            --radius-xl: 24px;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: #334155;
+            padding-bottom: 100px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .edit-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .page-header {
+            background: var(--primary-gradient);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .subject-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-badge {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .card-body {
+            padding: 2.5rem;
+        }
+
+        .section-header {
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #4c51bf;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .question-card:hover {
+            transform: translateY(-3px);
+            border-color: #4c51bf;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+        }
+
+        .question-number {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--primary-gradient);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+            z-index: 2;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .form-control,
+        .form-select,
+        textarea {
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            background: white;
+        }
+
+        .form-control:focus,
+        .form-select:focus,
+        textarea:focus {
+            border-color: #4c51bf;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            outline: none;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem 0;
+        }
+
+        .upload-area:hover {
+            border-color: #4c51bf;
+            background: #f1f5f9;
+        }
+
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+            border: 2px solid #e2e8f0;
+            display: none;
+        }
+
+        .current-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: var(--radius-md);
+            margin: 1rem 0;
+            border: 2px solid #4c51bf;
+        }
+
+        .image-info {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .equation-suggestions {
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .equation-suggestions .category {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .symbol-btn {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            margin: 0.2rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .symbol-btn:hover {
+            background: #4c51bf;
+            color: white;
+            border-color: #4c51bf;
+            transform: translateY(-1px);
+        }
+
+        .form-actions {
+            background: #f8fafc;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-top: 3rem;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.875rem 2.5rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 0.875rem 2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .floating-actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .action-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: white;
+            color: #4c51bf;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .answer-header {
+            color: #4c51bf;
+            font-weight: 600;
+            padding: 1rem 0;
+            border-bottom: 2px solid #e2e8f0;
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .equation-box {
+            font-family: "Cambria Math", "Times New Roman", serif;
+            font-size: 1.1rem;
+        }
+
+        .error-message {
+            font-size: 0.85rem;
+            color: #ef4444;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .edit-container {
+                padding: 20px 15px;
+            }
+
+            .page-header {
+                padding: 1.5rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .question-card {
+                padding: 1.5rem;
+            }
+
+            .floating-actions {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .action-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="edit-container">
+        <!-- Page Header -->
+        <div class="page-header animate-fade-in">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h2 mb-3">
+                        <i class="fas fa-edit me-2"></i>Edit Part B - Descriptive Questions
+                    </h1>
+                    <div class="subject-info">
+                        <span class="info-badge">
+                            <i class="fas fa-book"></i> {{ question_paper.subject_name }}
+                        </span>
+                        <span class="info-badge">
+                            <i class="fas fa-question-circle"></i> {{ part_b.questions.count }} Questions
+                        </span>
+                        <span class="info-badge">
+                            <i class="fas fa-star"></i> {{ part_b.each_questions_mark }} marks each
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end d-none d-md-block">
+                    <div class="bg-white bg-opacity-20 rounded-circle d-inline-flex p-3">
+                        <i class="fas fa-pen-to-square fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="main-card animate-fade-in">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" id="editForm">
+                    {% csrf_token %}
+                    <div class="part-b-container">
+                        <div class="container-fluid px-4">
+                            <!-- Header -->
+                            <div class="glass-card mb-4 mt-4">
+                                <div class="card-header bg-success">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h1 class="mb-1 text-white h3">
+                                                <i class="fas fa-edit me-2"></i>Edit Part B - Descriptive Section
+                                            </h1>
+                                            <p class="mb-0 text-white-50">{{ question_paper.subject_name }} ({{
+                                                question_paper.subject_code }})</p>
+                                        </div>
+                                        <div class="text-white text-end">
+                                            <div class="h5 mb-0">{{ part_b.required_questions }} Required</div>
+                                            <small>{{ part_b.each_questions_mark }} marks each</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <!-- FORM COLUMN -->
+                                <div class="col-lg-10 offset-lg-1">
+                                    <div class="glass-card mb-4">
+                                        <div class="card-header bg-success">
+                                            <h4 class="mb-0 text-white">
+                                                <i class="fas fa-list me-2"></i>Questions
+                                            </h4>
+                                        </div>
+
+                                        <div class="card-body">
+                                            <form method="post" enctype="multipart/form-data" id="editForm">
+                                                {% csrf_token %}
+
+                                                <!-- Error Message -->
+                                                {% if formset.errors %}
+                                                <div class="alert alert-danger border-0 rounded-lg mb-4">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                                                        <div>Please correct the errors below.</div>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+
+                                                <!-- Section Info with Dropdown -->
+                                                <div class="mb-4 bg-light p-3 rounded">
+                                                    <label class="form-label fw-semibold">Section Information</label>
+                                                    <div class="input-group mb-2">
+                                                        <select class="form-select"
+                                                            onchange="document.getElementById('infoBox').value = this.value;">
+                                                            <option value="">-- Select Predefined Instruction --
+                                                            </option>
+                                                            {% for inst in instructions %}
+                                                            <option value="{{ inst.text }}">{{ inst.text }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <textarea name="info" id="infoBox" class="form-control" rows="2"
+                                                        placeholder="Special instructions..."
+                                                        required>{{ part_b.info }}</textarea>
+                                                </div>
+
+                                                {{ formset.management_form }}
+
+                                                <div class="questions-list">
+                                                    {% for form in formset %}
+                                                    <div class="question-item mb-4 p-3 border rounded bg-white shadow-sm"
+                                                        id="question-row-{{ forloop.counter0 }}">
+                                                        {{ form.id }}
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                                                            <h5 class="m-0 text-success">Question {{ forloop.counter }}
+                                                            </h5>
+                                                        </div>
+
+                                                        <div class="row g-3">
+                                                            <!-- Module & Outcome Dropdowns -->
+                                                            <div class="col-md-6">
+                                                                <label
+                                                                    class="form-label small fw-bold text-muted">Module</label>
+                                                                {{ form.module }}
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label
+                                                                    class="form-label small fw-bold text-muted">Assessment</label>
+                                                                <div class="row g-2">
+                                                                    <div class="col-6">{{ form.module_outcome }}</div>
+                                                                    <div class="col-6">{{ form.level }}</div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Question Text -->
+                                                            <div class="col-12">
+                                                                <label
+                                                                    class="form-label small fw-bold text-muted">Question</label>
+                                                                {{ form.question }}
+                                                            </div>
+
+                                                            <!-- Image Upload -->
+                                                            <div class="col-md-12">
+                                                                <a class="text-decoration-none small text-success"
+                                                                    data-bs-toggle="collapse"
+                                                                    href="#imgOptions{{ forloop.counter0 }}">
+                                                                    <i class="fas fa-image me-1"></i> Question Image
+                                                                </a>
+                                                                <div class="collapse {% if form.instance.question_image %}show{% endif %} mt-2"
+                                                                    id="imgOptions{{ forloop.counter0 }}">
+                                                                    <div class="card card-body bg-light">
+                                                                        {{ form.question_image }}
+
+                                                                        {% if form.instance.question_image %}
+                                                                        <div class="form-check mt-2 small">
+                                                                            <input type="checkbox"
+                                                                                name="form-{{ forloop.counter0 }}-clear_question_image"
+                                                                                id="id_form-{{ forloop.counter0 }}-clear_question_image"
+                                                                                class="form-check-input">
+                                                                            <label
+                                                                                for="id_form-{{ forloop.counter0 }}-clear_question_image"
+                                                                                class="form-check-label text-danger">Remove
+                                                                                current image</label>
+                                                                        </div>
+                                                                        <div class="mt-2 text-center">
+                                                                            <img src="{{ form.instance.question_image.url }}"
+                                                                                style="max-height: 100px;"
+                                                                                class="rounded border">
+                                                                        </div>
+                                                                        {% endif %}
+
+                                                                        <div class="mt-2 row">
+                                                                            <div class="col-6">{{
+                                                                                form.question_image_position }}</div>
+                                                                            <div class="col-6">{{
+                                                                                form.question_image_size }}</div>
+                                                                        </div>
+                                                                        <div class="mt-2 text-below-container"
+                                                                            style="display:none;">
+                                                                            <label class="small">Text Below
+                                                                                Image</label>
+                                                                            {{ form.text_below_image }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Answer Section -->
+                                                            <div class="col-12">
+                                                                <hr class="my-2">
+                                                                <label
+                                                                    class="form-label small fw-bold text-success">Answer
+                                                                    Details</label>
+                                                                <div class="row g-2">
+                                                                    <div class="col-md-12">
+                                                                        {{ form.answer_text }}
+                                                                    </div>
+
+                                                                    <!-- Equation Field with Buttons -->
+                                                                    <div class="col-md-6">
+                                                                        <label
+                                                                            class="small text-muted mb-1">Equation</label>
+                                                                        <textarea
+                                                                            name="{{ form.answer_equation.html_name }}"
+                                                                            id="{{ form.answer_equation.id_for_label }}"
+                                                                            class="form-control form-control-sm equation-box"
+                                                                            rows="2"
+                                                                            placeholder="LaTeX Equation (e.g. \sqrt{x})">{{ form.answer_equation.value|default_if_none:"" }}</textarea>
+
+                                                                        <!-- Equation Helper Buttons -->
+                                                                        <div
+                                                                            class="equation-suggestions mt-2 p-2 bg-light rounded border">
+                                                                            <div class="d-flex flex-wrap gap-1">
+                                                                                <button type="button"
+                                                                                    class="btn btn-xs btn-outline-secondary"
+                                                                                    data-eq="+">+</button>
+                                                                                <button type="button"
+                                                                                    class="btn btn-xs btn-outline-secondary"
+                                                                                    data-eq="-">−</button>
+                                                                                <button type="button"
+                                                                                    class="btn btn-xs btn-outline-secondary"
+                                                                                    data-eq="×">×</button>
+                                                                                <button type="button"
+                                                                                    class="btn btn-xs btn-outline-secondary"
+                                                                                    data-eq="÷">÷</button>
+                                                                                <button type="button"
+                                                                                    class="btn btn-xs btn-outline-secondary"
+                                                                                    data-eq="=">=</button>
+                                                                                <div class="vr mx-1"></div>
+                                                                                <button type="button"
+                                                                                    class="btn btn-xs btn-outline-secondary"
+                                                                                    data-eq="²">x²</button>
+                                                                                <button type="button"
+                                                                                    class="btn btn-xs btn-outline-secondary"
+                                                                                    data-eq="\sqrt{}">√</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-md-6">
+                                                                        <label class="small text-muted mb-1">Image
+                                                                            Answer</label>
+                                                                        <div class="input-group input-group-sm">
+                                                                            <label class="input-group-text"><i
+                                                                                    class="fas fa-image"></i></label>
+                                                                            {{ form.answer_image }}
+                                                                        </div>
+                                                                        {% if form.instance.answer_image %}
+                                                                        <div class="mt-1 text-center">
+                                                                            <img src="{{ form.instance.answer_image.url }}"
+                                                                                style="max-height: 80px;"
+                                                                                class="rounded border">
+                                                                        </div>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+
+                                                <div class="d-grid gap-2 d-md-flex justify-content-between mt-4">
+                                                    <a href="javascript:history.back()"
+                                                        class="btn btn-outline-secondary">Back</a>
+                                                    <button type="submit" class="btn btn-success px-5">Save
+                                                        Changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <style>
+                        .glass-card {
+                            background: rgba(255, 255, 255, 0.95);
+                            backdrop-filter: blur(10px);
+                            border-radius: 12px;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+                        }
+
+                        .card-header.bg-success {
+                            background: linear-gradient(135deg, #10b981, #059669) !important;
+                            padding: 1rem;
+                            border-radius: 12px 12px 0 0;
+                        }
+
+                        .btn-xs {
+                            padding: 0.1rem 0.4rem;
+                            font-size: 0.75rem;
+                            border-radius: 0.2rem;
+                        }
+                    </style>
+
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+                    <script id="MathJax-script" async
+                        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            // Style all form inputs
+                            styleFormFields();
+
+                            // --- Equation Button Logic ---
+                            document.addEventListener("click", function (e) {
+                                if (!e.target.dataset.eq) return;
+
+                                const box = e.target.closest(".col-md-6");
+                                const textarea = box ? box.querySelector(".equation-box") : null;
+                                if (!textarea) return;
+
+                                const symbol = e.target.dataset.eq;
+                                const start = textarea.selectionStart;
+                                const end = textarea.selectionEnd;
+
+                                textarea.value =
+                                    textarea.value.slice(0, start) +
+                                    symbol +
+                                    textarea.value.slice(end);
+
+                                textarea.focus();
+                                textarea.selectionStart = textarea.selectionEnd = start + symbol.length;
+                            });
+
+                            // --- Dependent Dropdown Logic (Module -> Outcome) ---
+                            function filterModuleOutcomes(moduleSelect) {
+                                const outcomeSelectId = moduleSelect.id.replace('-module', '-module_outcome');
+                                const outcomeSelect = document.getElementById(outcomeSelectId);
+
+                                if (!outcomeSelect) return;
+
+                                const selectedModule = moduleSelect.value;
+                                const options = outcomeSelect.querySelectorAll('option');
+
+                                options.forEach(opt => {
+                                    const val = opt.value;
+                                    if (!val) {
+                                        opt.style.display = 'block';
+                                        return;
+                                    }
+
+                                    const prefix = "M" + selectedModule + ".";
+
+                                    if (selectedModule && val.startsWith(prefix)) {
+                                        opt.style.display = 'block';
+                                    } else if (!selectedModule) {
+                                        opt.style.display = 'block';
+                                    } else {
+                                        opt.style.display = 'none';
+                                    }
+                                });
+
+                                const currentVal = outcomeSelect.value;
+                                const currentOpt = outcomeSelect.querySelector(`option[value="${currentVal}"]`);
+                                if (currentOpt && currentOpt.style.display === 'none') {
+                                    outcomeSelect.value = "";
+                                }
+                            }
+
+                            const moduleSelects = document.querySelectorAll('select[name$="-module"]');
+                            moduleSelects.forEach(select => {
+                                filterModuleOutcomes(select);
+                                select.addEventListener('change', function () {
+                                    filterModuleOutcomes(this);
+                                });
+                            });
+
+                            // Toggle Logic for Image Position
+                            document.querySelectorAll('select[name$="-question_image_position"]').forEach(select => {
+                                select.addEventListener('change', function () {
+                                    // Update field visibility
+                                    const parent = this.closest('.card-body');
+                                    const textBelow = parent.querySelector('.text-below-container');
+                                    if (this.value === 'middle') {
+                                        textBelow.style.display = 'block';
+                                    } else {
+                                        textBelow.style.display = 'none';
+                                    }
+                                });
+                                // Initialize visibility
+                                const parent = select.closest('.card-body');
+                                const textBelow = parent.querySelector('.text-below-container');
+                                if (select.value === 'middle') {
+                                    textBelow.style.display = 'block';
+                                }
+                            });
+                        });
+
+                        function styleFormFields() {
+                            // Style text inputs
+                            const textInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
+                            textInputs.forEach(input => {
+                                if (!input.classList.contains('form-control')) {
+                                    input.classList.add('form-control');
+                                }
+                            });
+
+                            // Style textareas
+                            const textareas = document.querySelectorAll('textarea');
+                            textareas.forEach(textarea => {
+                                if (!textarea.classList.contains('form-control')) {
+                                    textarea.classList.add('form-control');
+                                }
+                            });
+
+                            // Style select elements
+                            const selects = document.querySelectorAll('select');
+                            selects.forEach(select => {
+                                if (!select.classList.contains('form-select')) {
+                                    select.classList.add('form-select');
+                                }
+                            });
+                        }
+
+                        // Auto-save draft
+                        let autoSaveTimer;
+                        function startAutoSave() {
+                            clearTimeout(autoSaveTimer);
+                            autoSaveTimer = setTimeout(() => {
+                                console.log('Auto-saving draft...');
+                                // Implement AJAX auto-save here if needed
+                            }, 3000);
+                        }
+
+                        // Start auto-save on input
+                        document.addEventListener('input', startAutoSave);
+                    </script>
+</body>
+
+</html>
