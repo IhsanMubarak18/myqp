@@ -1,0 +1,87 @@
+{
+  "name": "question-paper-generator",
+  "version": "1.0.0",
+  "description": "Desktop application for generating question papers with PDF export",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:linux": "electron-builder --linux",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:all": "electron-builder -mwl"
+  },
+  "keywords": [
+    "question-paper",
+    "education",
+    "pdf-generator",
+    "django",
+    "electron"
+  ],
+  "author": "Question Paper Generator Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "find-free-port": "^2.0.0"
+  },
+  "build": {
+    "appId": "com.questionpaper.generator",
+    "productName": "Question Paper Generator",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build-resources"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "server.py",
+      "manage.py",
+      "question_paper/**/*",
+      "question_paper_project/**/*",
+      "static/**/*",
+      "media/**/*",
+      "db.sqlite3",
+      "requirements.txt",
+      "python-runtime/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "python-runtime",
+        "to": "python-runtime",
+        "filter": ["**/*"]
+      }
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Education",
+      "icon": "build-resources/icon.png"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build-resources/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "build-resources/icon.icns",
+      "category": "public.app-category.education"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

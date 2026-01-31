@@ -742,7 +742,7 @@
                                         {{ question_paper.part_a_details.info }}
                                     </div>
                                     <div style="text-align: right; font-weight: bold; font-size: 10pt;">
-                                        ({{ question_paper.part_a_details.questions.count }} × {{
+                                        ({{ question_paper.part_a_details.get_main_questions|length }} × {{
                                         question_paper.part_a_details.each_question_mark }} = {{
                                         question_paper.part_a_details.total }})
                                     </div>
@@ -758,7 +758,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for q in question_paper.part_a_details.questions.all %}
+                                            {% for q in question_paper.part_a_details.get_main_questions %}
                                             <tr>
                                                 <td class="col-qno">{{ forloop.counter }}</td>
                                                 <td class="col-question">
@@ -790,8 +790,8 @@
                                         <!-- Will be updated via JS -->
                                     </div>
                                     <div style="text-align: right; font-weight: bold; font-size: 10pt;">
-                                        ({{ required_questions }} × {{ each_questions_mark }} = {{
-                                        total_marks|default:0 }})
+                                        ({{ required_questions }} × {{ each_questions_mark }} = {% widthratio
+                                        required_questions 1 each_questions_mark %})
                                     </div>
                                 </div>
 

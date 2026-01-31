@@ -5,3 +5,16 @@ db.sqlite3
 .env
 question_env/
 media/
+
+# Node.js / Electron
+node_modules/
+dist/
+*.log
+npm-debug.log*
+package-lock.json
+
+# Python runtime (bundled for production)
+python-runtime/
+
+# Build resources temp files
+build-resources/icon.iconset/
