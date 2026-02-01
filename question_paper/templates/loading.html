@@ -2,17 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
+    <!-- Electron security -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; style-src 'self' 'unsafe-inline';">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading - Question Paper Generator</title>
+
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                         Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             justify-content: center;
@@ -20,30 +27,30 @@
             height: 100vh;
             color: white;
         }
-        
+
         .loading-container {
             text-align: center;
             padding: 40px;
         }
-        
+
         .logo {
             font-size: 64px;
             margin-bottom: 20px;
             animation: pulse 2s ease-in-out infinite;
         }
-        
+
         h1 {
             font-size: 32px;
             font-weight: 600;
             margin-bottom: 10px;
         }
-        
+
         p {
             font-size: 18px;
             opacity: 0.9;
             margin-bottom: 30px;
         }
-        
+
         .spinner {
             width: 50px;
             height: 50px;
@@ -53,30 +60,31 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
+
         .status {
             margin-top: 20px;
             font-size: 14px;
             opacity: 0.8;
         }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
     </style>
 </head>
+
 <body>
-    <div class="loading-container">
-        <div class="logo">📝</div>
-        <h1>Question Paper Generator</h1>
-        <p>Starting application...</p>
-        <div class="spinner"></div>
-        <div class="status">Initializing Django server</div>
-    </div>
+<div class="loading-container">
+    <div class="logo" aria-hidden="true">📝</div>
+    <h1>Question Paper Generator</h1>
+    <p>Starting application…</p>
+    <div class="spinner" role="status"></div>
+    <div class="status">Initializing Django server</div>
+</div>
 </body>
 </html>

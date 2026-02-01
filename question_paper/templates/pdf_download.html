@@ -1,14 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Question Paper Ready</title>
-    
+
     <!-- Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +22,7 @@
             --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             --card-bg: rgba(255, 255, 255, 0.95);
             --glass-border: rgba(255, 255, 255, 0.2);
-            
+
             --shadow-lg: 0 25px 60px rgba(0, 0, 0, 0.15);
             --shadow-md: 0 15px 40px rgba(0, 0, 0, 0.1);
             --radius-xl: 24px;
@@ -53,7 +54,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 radial-gradient(circle at 15% 50%, rgba(76, 81, 191, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
             z-index: -1;
@@ -136,6 +137,61 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        .back-button-container {
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.75rem;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            color: #475569;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+            z-index: 0;
+        }
+
+        .back-btn:hover::before {
+            width: 100%;
+        }
+
+        .back-btn:hover {
+            border-color: transparent;
+            color: white;
+            transform: translateX(-5px);
+            box-shadow: 0 10px 25px rgba(76, 81, 191, 0.2);
+        }
+
+        .back-btn i,
+        .back-btn span {
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .back-btn:hover i {
+            transform: translateX(-3px);
         }
 
         .download-buttons {
@@ -301,6 +357,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -308,9 +365,12 @@
         }
 
         @keyframes float {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0);
             }
+
             50% {
                 transform: translateY(-10px);
             }
@@ -321,10 +381,12 @@
                 transform: scale(1);
                 opacity: 1;
             }
+
             50% {
                 transform: scale(1.05);
                 opacity: 0.8;
             }
+
             100% {
                 transform: scale(1);
                 opacity: 1;
@@ -341,25 +403,30 @@
             .download-wrapper {
                 padding: 15px;
             }
-            
+
             .download-card {
                 padding: 2rem 1.5rem;
             }
-            
+
             .download-title {
                 font-size: 1.8rem;
             }
-            
+
+            .back-btn {
+                font-size: 0.9rem;
+                padding: 0.75rem 1.5rem;
+            }
+
             .download-buttons {
                 grid-template-columns: 1fr;
             }
-            
+
             .download-stats {
                 flex-direction: column;
                 gap: 1.5rem;
                 padding: 1.5rem 0;
             }
-            
+
             .footer-content {
                 flex-direction: column;
                 text-align: center;
@@ -382,9 +449,18 @@
                 Your examination documents are professionally formatted and ready for download in PDF format.
             </p>
 
+            <!-- Back Button -->
+            <div class="back-button-container">
+                <a href="{% url 'question_paper:review' question_paper.id %}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Review</span>
+                </a>
+            </div>
+
             <!-- Download Buttons -->
             <div class="download-buttons">
-                <a href="{% url 'question_paper:question_pdf' question_paper.id %}" class="download-btn" id="btnQuestion">
+                <a href="{% url 'question_paper:download_question_paper' pk=question_paper.id %}" class="download-btn"
+                    id="btnQuestion" target="_blank">
                     <div class="btn-icon">
                         <i class="fas fa-file-alt"></i>
                     </div>
@@ -394,7 +470,9 @@
                     </div>
                 </a>
 
-                <a href="{% url 'question_paper:answer_pdf' question_paper.id %}" class="download-btn" id="btnAnswer">
+
+                <a href="{% url 'question_paper:answer_pdf' question_paper.id %}" class="download-btn" id="btnAnswer"
+                    target="_blank">
                     <div class="btn-icon">
                         <i class="fas fa-key"></i>
                     </div>
@@ -404,7 +482,8 @@
                     </div>
                 </a>
 
-                <a href="{% url 'question_paper:blueprint_pdf' question_paper.id %}" class="download-btn" id="btnBlueprint">
+                <a href="{% url 'question_paper:blueprint_pdf' question_paper.id %}" class="download-btn"
+                    id="btnBlueprint" target="_blank">
                     <div class="btn-icon">
                         <i class="fas fa-project-diagram"></i>
                     </div>
@@ -445,18 +524,18 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Add loading state to download buttons
             const downloadButtons = document.querySelectorAll('.download-btn');
-            
+
             downloadButtons.forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', function (e) {
                     // Add loading class
                     this.classList.add('loading');
-                    
+
                     // Store the original HTML
                     const originalHTML = this.innerHTML;
-                    
+
                     // Show loading indicator for 1.5 seconds then remove
                     setTimeout(() => {
                         this.classList.remove('loading');
@@ -464,26 +543,27 @@
                     }, 1500);
                 });
             });
-            
+
             // Add animation to buttons on load
             const buttons = document.querySelectorAll('.download-btn');
             buttons.forEach((btn, index) => {
                 btn.style.opacity = '0';
                 btn.style.transform = 'translateY(20px)';
-                
+
                 setTimeout(() => {
                     btn.style.transition = 'all 0.5s ease';
                     btn.style.opacity = '1';
                     btn.style.transform = 'translateY(0)';
                 }, index * 200);
             });
-            
+
             // Add confetti effect on success
             const successIcon = document.querySelector('.success-icon');
-            successIcon.addEventListener('animationiteration', function() {
+            successIcon.addEventListener('animationiteration', function () {
                 // You can add confetti effect here if needed
             });
         });
     </script>
 </body>
+
 </html>

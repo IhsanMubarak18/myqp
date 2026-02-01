@@ -13,6 +13,9 @@ from .views import (
     QuestionPaperPDF,
     AnswerSheetPDF,
     BlueprintPDF,
+    download_answer_sheet,
+    download_blueprint,
+    download_question_paper,
     get_parent_questions,
     get_subject_details,
     AdminDashboardView,
@@ -45,11 +48,13 @@ from .views import (
     InstructionCreateView,
     InstructionUpdateView,
     InstructionDeleteView,
+    loading_view,
 )
 
 app_name = "question_paper"
 
 urlpatterns = [
+    path('', loading_view, name='loading'),
     # Admin Dashboard
     path("admin-dashboard/", AdminDashboardView.as_view(), name="admin_dashboard"),
     path("resume/<int:pk>/", ResumeQPView.as_view(), name="resume"),
@@ -93,7 +98,7 @@ urlpatterns = [
     path("manage/instructions/<int:pk>/delete/", InstructionDeleteView.as_view(), name="instruction_delete"),
 
     # Main flow
-    path("", HeadingPage.as_view(), name="heading"),
+    path("heading/", HeadingPage.as_view(), name="heading"),
     path("part-a/", CreatePartA.as_view(), name="PartA"),
     path("part-b/", CreatePartB.as_view(), name="PartB"),
     path("part-c/", CreatePartC.as_view(), name="PartC"),
@@ -118,4 +123,19 @@ urlpatterns = [
     path("api/get-parent-questions/<str:part_type>/<int:question_paper_id>/",
          get_parent_questions, name="get_parent_questions"),
     path("api/get-subject-details/", get_subject_details, name="get_subject_details"),
+    path(
+        "download/question-paper/<int:pk>/",
+        download_question_paper,
+        name="download_question_paper"
+    ),
+    path(
+        "download/answer-sheet/<int:pk>/",
+        download_answer_sheet,
+        name="download_answer_sheet",
+    ),
+    path(
+        "download/blueprint/<int:pk>/",
+        download_blueprint,
+        name="download_blueprint",
+    ),
 ]

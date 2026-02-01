@@ -121,6 +121,29 @@
             flex-wrap: wrap;
         }
 
+        /* BACK BUTTON */
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #475569;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-back:hover {
+            background: #f8fafc;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateX(-3px);
+        }
+
         /* EDIT HEADING BUTTON */
         .btn-edit-heading {
             display: inline-flex;
@@ -685,6 +708,9 @@
                     <p class="page-subtitle">Review and verify all sections before downloading</p>
                 </div>
                 <div class="header-actions">
+                    <a href="{% url 'question_paper:resume_list' %}" class="btn-back">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
                     {% if qp %}
                     <a href="{% url 'question_paper:edit_heading' qp.id %}" class="btn-edit-heading">
                         <i class="fas fa-edit"></i> Edit Heading & Blueprint

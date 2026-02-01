@@ -38,7 +38,7 @@
     "files": [
       "main.js",
       "preload.js",
-      "renderer.js",
+      "loading.html",
       "server.py",
       "manage.py",
       "question_paper/**/*",
@@ -46,8 +46,7 @@
       "static/**/*",
       "media/**/*",
       "db.sqlite3",
-      "requirements.txt",
-      "python-runtime/**/*"
+      "requirements.txt"
     ],
     "extraResources": [
       {

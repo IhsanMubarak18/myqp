@@ -22,6 +22,26 @@
 
     <!-- In your base.html or head section -->
     <link rel="stylesheet" href="{% static 'css/questions.css' %}">
+    <style>
+        .back-button {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            padding: 8px 14px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            z-index: 9999;
+        }
+
+        .back-button:hover {
+            background: #34495e;
+        }
+    </style>
+
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -37,6 +57,10 @@
                 </div>
                 <span class="fw-bold fs-4">Question Paper System</span>
             </a>
+            <button id="back-btn" class="back-button" title="Go back">
+                ← Back
+            </button>
+
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
@@ -124,6 +148,31 @@
                 btn.addEventListener('mouseleave', () => {
                     btn.style.transform = '';
                 });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const btn = document.getElementById('back-btn');
+
+            if (!btn) return;
+
+            // Not running inside Electron (normal browser)
+            if (!window.electronAPI) {
+                btn.style.display = 'none';
+                return;
+            }
+
+            const canGoBack = await window.electronAPI.canGoBack();
+
+            if (!canGoBack) {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+            }
+
+            btn.addEventListener('click', () => {
+                window.electronAPI.goBack();
             });
         });
     </script>

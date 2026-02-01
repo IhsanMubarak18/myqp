@@ -1,14 +1,12 @@
+from pathlib import Path
+from django.conf import settings
 from django.utils import timezone
 from django.forms import modelformset_factory
 from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from reportlab.platypus import Image as RLImage 
 from django.views.generic import View
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.utils.decorators import method_decorator
-from PIL import Image, ImageOps
-from io import BytesIO
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.views.decorators.http import require_GET
 import json
 
@@ -41,7 +39,6 @@ from reportlab.platypus import (
     Paragraph,
     Spacer,
     Image as RLImage,
-    KeepTogether,
 )
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -73,6 +70,26 @@ def split_text_for_image(question):
     
     else:  # Default (top)
         return question.question or "", ""
+
+
+
+
+
+
+
+
+
+from django.shortcuts import render
+
+def loading_view(request):
+    """Redirect to the resume list page (main entry point)"""
+    return redirect('question_paper:resume_list')
+
+
+
+
+
+
 
 
 def get_question_display_html(question):
@@ -291,7 +308,6 @@ class CreatePartA(View):
                 },
             )
 
-        # ================= STEP 2 =================
         # ================= STEP 2 =================
         num_questions = int(request.session.get("num_questions_a"))
         each_mark = float(request.session.get("each_mark_a"))
@@ -2058,3 +2074,97 @@ class InstructionDeleteView(LoginRequiredMixin, View):
         messages.success(request, 'Section instruction deleted successfully!')
         return redirect('question_paper:instruction_list')
 
+
+
+
+
+
+
+
+def download_question_paper(request, pk):
+    qp = get_object_or_404(QuestionPaper, pk=pk)
+
+    part_a = getattr(qp, "part_a_details", None)
+    part_b = getattr(qp, "part_b_details", None)
+    part_c = getattr(qp, "part_c_details", None)
+
+    context = {
+        "qp": qp,
+        "part_a": part_a,
+        "part_b": part_b,
+        "part_c": part_c,
+        "questions_a": part_a.questions.all() if part_a else [],
+        "questions_b": part_b.questions.all() if part_b else [],
+        "questions_c": (
+            part_c.questions.order_by("or_group_number", "id")
+            if part_c else []
+        ),
+    }
+
+    response = render_to_pdf("pdf/question_paper_pdf.html", context)
+
+    # Display PDF in browser instead of forcing download
+    response["Content-Disposition"] = (
+        f'inline; filename="question_paper_{qp.id}.pdf"'
+    )
+
+    return response
+
+
+
+
+
+
+
+
+
+
+
+def download_answer_sheet(request, pk):
+    qp = get_object_or_404(QuestionPaper, pk=pk)
+
+    part_a = getattr(qp, "part_a_details", None)
+    part_b = getattr(qp, "part_b_details", None)
+    part_c = getattr(qp, "part_c_details", None)
+
+    context = {
+        "qp": qp,
+        "part_a": part_a,
+        "part_b": part_b,
+        "part_c": part_c,
+        "questions_a": part_a.questions.all() if part_a else [],
+        "questions_b": part_b.questions.all() if part_b else [],
+        "questions_c": (
+            part_c.questions.order_by("or_group_number", "id")
+            if part_c else []
+        ),
+    }
+
+    response = render_to_pdf("pdf/answer_sheet_pdf.html", context)
+
+    response["Content-Disposition"] = (
+        f'inline; filename="answer_sheet_{qp.id}.pdf"'
+    )
+
+    return response
+
+
+
+
+
+
+
+def download_blueprint(request, pk):
+    qp = get_object_or_404(QuestionPaper, pk=pk)
+
+    context = {
+        "qp": qp,
+    }
+
+    response = render_to_pdf("pdf/blueprint_pdf.html", context)
+
+    response["Content-Disposition"] = (
+        f'inline; filename="blueprint_{qp.id}.pdf"'
+    )
+
+    return response
